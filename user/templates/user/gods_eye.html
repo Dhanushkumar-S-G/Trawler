@@ -173,7 +173,6 @@
                         </div>`
             outer.insertAdjacentHTML("beforeend", toBeAdded)
             get_whois(ip_address.ip_address)
-            get_nmap_port(ip_address.ip_address)
         }
         async function get_whois(ip_address){
             console.log(ip_address)
@@ -193,7 +192,7 @@
                         </div>`
                 outer.insertAdjacentHTML("beforeend", toBeAdded)
             }
-
+            get_nmap_port(ip_address.ip_address)
         }
         async function get_ssl_cert(){
             url = `/api/ssl_certificate/?domain=kct.ac.in&case_number=1234`

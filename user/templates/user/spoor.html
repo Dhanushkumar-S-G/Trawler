@@ -158,7 +158,7 @@
     <script>
         let outer = document.getElementById("outer_container")
         async function get_ip(){
-            url = `/api/getip/?domain=kct.ac.in&case_number=1234`
+            url = `/api/getip/?domain={{domain}}&case_number={{case_number}}`
             let ip_address = await fetch(url)
             ip_address = await ip_address.json()    
             toBeAdded = `<div class="col-6">
@@ -175,10 +175,10 @@
             get_whois(ip_address.ip_address)
         }
         async function get_whois(ip_address){
-            console.log(ip_address)
-            url = `/api/whois/?ip_address=${ip_address}&case_number=1234`
+            url = `/api/whois/?ip_address=${ip_address}&case_number={{case_number}}`
             let whois = await fetch(url)
             whois = await whois.json()
+            console.log(JSON.stringify(whois))
             if (whois.res.error == true){
                 toBeAdded = `<div class="col-6">
                         <div class="card shadow mb-4">
@@ -192,17 +192,52 @@
                         </div>`
                 outer.insertAdjacentHTML("beforeend", toBeAdded)
             }
-            get_nmap_port(ip_address.ip_address)
+            else{
+                toBeAdded = `
+            <div class="col-6">
+            <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Whois</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Value</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        `
+
+            for(let key in whois.res){
+                toBeAdded += `<tr>
+                                <td>${key}</td>
+                                <td>${whois.res[key]}</td>                             
+                            </tr>`
+            }
+            toBeAdded  += `
+            </tbody>
+            </table>
+            </div></div></div>
+                        </div>
+                        </div>`
+
+            outer.insertAdjacentHTML("beforeend", toBeAdded)
+
+            }
+            get_nmap_port(ip_address)
         }
         async function get_ssl_cert(){
-            url = `/api/ssl_certificate/?domain=kct.ac.in&case_number=1234`
+            url = `/api/ssl_certificate/?domain={{domain}}&case_number={{case_number}}`
             let ssl_certificate = await fetch(url)
             ssl_certificate = await ssl_certificate .json()
             toBeAdded = `
             <div class="col-12">
             <div class="card shadow mb-4">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Related Subdomains</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">SSL Validation</h6>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -236,11 +271,9 @@
                         </div>`
 
             outer.insertAdjacentHTML("beforeend", toBeAdded)
-            
-            console.log("get_ssl"+ JSON.stringify(ssl_certificate))
         }
         async function get_wappalyzer(){
-            url = `/api/wappalyzer/?url=https://www.kct.ac.in/&case_number=1234`
+            url = `/api/wappalyzer/?url={{url}}&case_number={{case_number}}`
             let wappalyzer= await fetch(url)
             wappalyzer = await wappalyzer.json()
             toBeAdded = `<div class="col-6">
@@ -277,9 +310,10 @@
                         </div>`
 
             outer.insertAdjacentHTML("beforeend", toBeAdded)
+            get_dns_enum()
         }
         async function get_nmap_port(ip_address){   
-            url = `/api/nmap_port/?ip_address=${ip_address}&case_number=1234`
+            url = `/api/nmap_port/?ip_address=${ip_address}&case_number={{case_number}}`
             let nmap_port = await fetch(url)
             nmap_port = await nmap_port.json()
 
@@ -316,9 +350,10 @@
                         </div>`
 
             outer.insertAdjacentHTML("beforeend", toBeAdded)
+            get_wappalyzer()
         }
         async function get_dns_enum(){
-            url = `/api/dns_enum/?domain=kct.ac.in&case_number=1234`
+            url = `/api/dns_enum/?domain={{domain}}&case_number={{case_number}}`
             let ssl_certificate = await fetch(url)
             ssl_certificate = await ssl_certificate.json()
             toBeAdded = `
@@ -354,10 +389,10 @@
                         </div>`
 
             outer.insertAdjacentHTML("beforeend", toBeAdded)
-        
+            get_subdomain_enum()
         }
         async function get_dns_family(){
-            url = `/api/dns_for_family/?domain=kct.ac.in&case_number=1234`
+            url = `/api/dns_for_family/?domain={{domain}}&case_number={{case_number}}`
             let dns_for_family= await fetch(url)
             dns_for_family = await dns_for_family.json()
             toBeAdded = `<div class="col-6">
@@ -372,9 +407,10 @@
                         </div>`
 
             outer.insertAdjacentHTML("beforeend", toBeAdded)
+            get_ip()
         }
         async function get_subdomain_enum(){
-            url = `/api/subdomain_enum/?domain=kct.ac.in&case_number=1234`
+            url = `/api/subdomain_enum/?domain={{domain}}&case_number={{case_number}}`
             let subdomain_enum = await fetch(url)
             subdomain_enum = await subdomain_enum.json()
             toBeAdded = `
@@ -407,7 +443,7 @@
                         </div>`
 
             outer.insertAdjacentHTML("beforeend", toBeAdded)
-            
+            get_ssl_cert()
         }
         // async function get_whatcms(){
         //     url = `/api/whatcms/?domain=kct.ac.in&case_number=1234`
@@ -415,12 +451,7 @@
         //     whatcms = await whatcms.json()
         //     console.log("whatcms"+whatcms)
         // }
-        get_ip()
-        get_ssl_cert()
-        get_wappalyzer()
-        get_dns_enum()
         get_dns_family()
-        get_subdomain_enum()
         // get_whatcms()
     </script>
 {% endblock %}

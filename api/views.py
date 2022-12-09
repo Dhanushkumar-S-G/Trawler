@@ -129,6 +129,7 @@ def nmap_port(request):
             results =dict()
             for i in port:
                 res = scanner.scan(target, str(i))
+                print(res)
                 res = res['scan'][target]['tcp'][i]['state']
                 results[i] = res
             nmap_obj.res = results

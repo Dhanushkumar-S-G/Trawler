@@ -5,4 +5,4 @@ from .models import *
 class CaseCreationForm(forms.ModelForm):
     class Meta:
         model = Case
-        fields = "__all__"
+        fields = ["case_number","domain","link"]

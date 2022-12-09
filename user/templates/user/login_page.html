@@ -1,0 +1,131 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block content %}
+
+    <link href="{% static 'bootstrap/css/sb-admin-2.css' %}" rel="stylesheet">
+    <link href="{% static 'bootstrap/bootstrap-social.css' %}" rel="stylesheet">
+
+    <div class="content-wrapper d-flex justify-content-center align-items-center flex-wrap" style="height: 80vh">
+        <div class="col-sm-12 col-md-6">
+            <center><p style="color:Black;">Kumaraguru Institutions </p>
+
+                <H3 style="color:Black;">KCT System - V 1.0</H3>
+
+            </center>
+            <br><br><br>
+            <br><br>
+
+            <div class="container" style="height: 100%; display: flex; justify-content: center">
+
+                {% if user.is_authenticated %}
+
+                    <a href="#" class="btn btn-logout btn-primary btn-block">
+                        Logout
+                    </a>
+
+                {% else %}
+                    <div class="row">
+                        <div class="col-sm">
+                            <a class="btn  btn-social btn-primary" href="$">
+                                <span class="fab fa-microsoft"></span>
+                                Sign in with Microsoft
+                            </a>
+                        </div>
+
+
+                    </div>
+
+
+                {% endif %}
+            </div>
+        </div>
+        {% if not user.is_authenticated %}
+            <div class="col-sm-12 col-md-6 d-flex justify-content-center my-5">
+                <form method="post" action="#">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label>
+                            Phone Number/Email Address/Roll Number
+                            <input name="username" type="text" required class="form-control" required>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            Password
+                            <input type="password" name="password" required class="form-control" required>
+                        </label>
+                    </div>
+                    <input type="submit" value="Sign In" class="btn btn-primary">
+                </form>
+            </div>
+        {% endif %}
+
+    </div>
+
+
+
+    <style>
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+
+        .g-sign-in-button {
+            margin: 10px;
+            display: inline-block;
+            width: 240px;
+            height: 50px;
+            background-color: #4285f4;
+            color: #fff;
+            border-radius: 1px;
+            box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .25);
+            transition: background-color .218s, border-color .218s, box-shadow .218s;
+        }
+
+        .g-sign-in-button:hover {
+            cursor: pointer;
+            -webkit-box-shadow: 0 0 3px 3px rgba(66, 133, 244, .3);
+            box-shadow: 0 0 3px 3px rgba(66, 133, 244, .3);
+        }
+
+        .g-sign-in-button:active {
+            background-color: #3367D6;
+            transition: background-color 0.2s;
+        }
+
+        .g-sign-in-button .content-wrapper {
+            height: 100%;
+            width: 100%;
+            border: 1px solid transparent;
+        }
+
+        .g-sign-in-button img {
+            width: 18px;
+            height: 18px;
+            vertical-align: top !important;
+        }
+
+        .g-sign-in-button .logo-wrapper {
+            padding: 15px;
+            background: #fff;
+            width: 48px;
+            height: 100%;
+            border-radius: 1px;
+            display: inline-block;
+        }
+
+        .g-sign-in-button .text-container {
+            font-family: Roboto, arial, sans-serif;
+            font-weight: 500;
+            letter-spacing: .21px;
+            font-size: 16px;
+            line-height: 48px;
+            vertical-align: top;
+            border: none;
+            display: inline;
+            text-align: center;
+            width: 180px;
+        }
+
+
+    </style>
+{% endblock content %}

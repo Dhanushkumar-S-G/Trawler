@@ -1,0 +1,318 @@
+{% extends 'user/index.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block style_references %}
+<link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock%}
+{% block content %}
+<div id="content">
+    <div class="container-fluid">
+        <!-- <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Position</th>
+                                <th>Office</th>
+                                <th>Age</th>
+                                <th>Start date</th>
+                                <th>Salary</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Tiger Nixon</td>
+                                <td>System Architect</td>
+                                <td>Edinburgh</td>
+                                <td>61</td>
+                                <td>2011/04/25</td>
+                                <td>$320,800</td>
+                            </tr>
+                            <tr>
+                                <td>Garrett Winters</td>
+                                <td>Accountant</td>
+                                <td>Tokyo</td>
+                                <td>63</td>
+                                <td>2011/07/25</td>
+                                <td>$170,750</td>
+                            </tr>
+                            <tr>
+                                <td>Ashton Cox</td>
+                                <td>Junior Technical Author</td>
+                                <td>San Francisco</td>
+                                <td>66</td>
+                                <td>2009/01/12</td>
+                                <td>$86,000</td>
+                            </tr>
+                            <tr>
+                                <td>Cedric Kelly</td>
+                                <td>Senior Javascript Developer</td>
+                                <td>Edinburgh</td>
+                                <td>22</td>
+                                <td>2012/03/29</td>
+                                <td>$433,060</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div> -->
+        <div class="row" id="outer_container">
+            <!-- <div class="col-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Basic Card Example</h6>
+                    </div>
+                    <div class="card-body">
+                        The styling for this basic card example is created by using default Bootstrap
+                        utility classes. By using utility classes, the style of the card component can be
+                        easily modified with no need for any custom CSS!
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Basic Card Example</h6>
+                    </div>
+                    <div class="card-body">
+                        The styling for this basic card example is created by using default Bootstrap
+                        utility classes. By using utility classes, the style of the card component can be
+                        easily modified with no need for any custom CSS!
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Basic Card Example</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Position</th>
+                                        <th>Office</th>
+                                        <th>Age</th>
+                                        <th>Start date</th>
+                                        <th>Salary</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Tiger Nixon</td>
+                                        <td>System Architect</td>
+                                        <td>Edinburgh</td>
+                                        <td>61</td>
+                                        <td>2011/04/25</td>
+                                        <td>$320,800</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Garrett Winters</td>
+                                        <td>Accountant</td>
+                                        <td>Tokyo</td>
+                                        <td>63</td>
+                                        <td>2011/07/25</td>
+                                        <td>$170,750</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ashton Cox</td>
+                                        <td>Junior Technical Author</td>
+                                        <td>San Francisco</td>
+                                        <td>66</td>
+                                        <td>2009/01/12</td>
+                                        <td>$86,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Cedric Kelly</td>
+                                        <td>Senior Javascript Developer</td>
+                                        <td>Edinburgh</td>
+                                        <td>22</td>
+                                        <td>2012/03/29</td>
+                                        <td>$433,060</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block script_references %}
+    <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'js/demo/datatables-demo.js' %}"></script>
+
+    <script>
+        let outer = document.getElementById("outer_container")
+        async function get_ip(){
+            url = `/api/getip/?domain=kct.ac.in&case_number=1234`
+            let ip_address = await fetch(url)
+            ip_address = await ip_address.json()    
+            toBeAdded = `<div class="col-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Ip Address</h6>
+                            </div>
+                            <div class="card-body">
+                                ${ip_address.ip_address}
+                            </div>
+                        </div>
+                        </div>`
+            outer.insertAdjacentHTML("beforeend", toBeAdded)
+            get_whois(ip_address.ip_address)
+            get_nmap_port(ip_address.ip_address)
+        }
+        async function get_whois(ip_address){
+            console.log(ip_address)
+            url = `/api/whois/?ip_address=${ip_address}&case_number=1234`
+            let whois = await fetch(url)
+            whois = await whois.json()
+            if (whois.res.error == true){
+                toBeAdded = `<div class="col-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">WhoIs</h6>
+                            </div>
+                            <div class="card-body" style="color:red">
+                                Sorry details could not be fetched
+                            </div>
+                        </div>
+                        </div>`
+                outer.insertAdjacentHTML("beforeend", toBeAdded)
+            }
+
+        }
+        async function get_ssl_cert(){
+            url = `/api/ssl_certificate/?domain=kct.ac.in&case_number=1234`
+            let ssl_certificate = await fetch(url)
+            ssl_certificate = await ssl_certificate .json()
+            // console.log("get_ssl"+ JSON.stringify(ssl_certificate))
+        }
+        async function get_wappalyzer(){
+            url = `/api/wappalyzer/?url=https://www.kct.ac.in/&case_number=1234`
+            let wappalyzer= await fetch(url)
+            wappalyzer = await wappalyzer.json()
+            console.log("get_wapp"+ JSON.stringify(wappalyzer.res))
+            toBeAdded = `<div class="col-6">
+            <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Tech Stack</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Versions</th>
+                                                <th>Category</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        `
+
+            for (let key in wappalyzer.res){
+                toBeAdded += `<tr>
+                                <td>${key}</td>
+                                <td>${wappalyzer.res[key].versions}</td>
+                                <td>${wappalyzer.res[key].categories}</td>
+                                
+                            </tr>`
+            }
+            toBeAdded  += `
+            </tbody>
+            </table>
+            </div></div>
+                        </div></div>
+                        </div>`
+
+            outer.insertAdjacentHTML("beforeend", toBeAdded)
+        }
+        async function get_nmap_port(ip_address){   
+            url = `/api/nmap_port/?ip_address=${ip_address}&case_number=1234`
+            let nmap_port = await fetch(url)
+            nmap_port = await nmap_port.json()
+            console.log(JSON.stringify(nmap_port))
+            console.log("get_nmap"+nmap_port.res[20])
+
+            toBeAdded = `
+            <div class="col-6">
+            <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Port Status</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Port Number</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        `
+
+            for (let key in nmap_port.res){
+                toBeAdded += `<tr>
+                                <td>${key}</td>
+                                <td>${nmap_port.res[key]}</td>
+                                
+                            </tr>`
+            }
+            toBeAdded  += `
+            </tbody>
+            </table>
+            </div></div></div>
+                        </div>
+                        </div>`
+
+            outer.insertAdjacentHTML("beforeend", toBeAdded)
+        }
+        async function get_dns_enum(){
+            url = `/api/dns_enum/?domain=kct.ac.in&case_number=1234`
+            let ssl_certificate = await fetch(url)
+            ssl_certificate = await ssl_certificate.json()
+            console.log("ssl_certificate" + ssl_certificate)
+        }
+        async function get_dns_family(){
+            url = `/api/dns_for_family/?domain=kct.ac.in&case_number=1234`
+            let dns_for_family= await fetch(url)
+            dns_for_family = await dns_for_family.json()
+            console.log("get_dns" + dns_for_family)
+
+        }
+        async function get_subdomain_enum(){
+            url = `/api/subdomain_enum/?domain=kct.ac.in&case_number=1234`
+            let subdomain_enum = await fetch(url)
+            subdomain_enum = await subdomain_enum.json()
+            console.log("get_sub"+subdomain_enum) 
+        }
+        async function get_whatcms(){
+            url = `/api/whatcms/?domain=kct.ac.in&case_number=1234`
+            let whatcms = await fetch(url)
+            whatcms = await whatcms.json()
+            console.log("whatcms"+whatcms)
+        }
+        get_ip()
+        get_ssl_cert()
+        get_wappalyzer()
+        get_dns_enum()
+        get_dns_family()
+        get_subdomain_enum()
+        get_whatcms()
+    </script>
+{% endblock %}

@@ -141,3 +141,5 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
 }
+
+GOOGLE_MAPS_API = "AIzaSyDeyB29f2HbX747Kqlb34njGl5LDvv5awE"

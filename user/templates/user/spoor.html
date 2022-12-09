@@ -7,7 +7,8 @@
 {% block content %}
 <style>
     #map{
-
+        width: 100%;
+        
     }
 </style>
 <div id="content">
@@ -162,6 +163,8 @@
 
     <script>
         let outer = document.getElementById("outer_container")
+        let lat;
+        let longi;
         async function get_ip(){
             url = `/api/getip/?domain={{domain}}&case_number={{case_number}}`
             let ip_address = await fetch(url)
@@ -227,22 +230,31 @@
             </table>
             </div></div></div>
                         </div>
-                        </div>`
+                        </div>
+                        <div class="col-6" >
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Map</h6>
+                            </div>
+                            <div class="card-body" id="map" style="height: 500px;">
+                            </div>
+                        </div>
+                        </div>
+                        `
 
-            outer.insertAdjacentHTML("beforeend", toBeAdded)
-
-            // function initMap() {
-            //     const uluru = { lat: -25.344, lng: 131.031 };
-            //     const map = new google.maps.Map(document.getElementById("map"), {
-            //         zoom: 4,
-            //         center: uluru,
-            //     });
-            //     const marker = new google.maps.Marker({
-            //         position: uluru,
-            //         map: map,
-            //     });
-            // }
-
+            outer.insertAdjacentHTML("beforeend", toBeAdded) 
+            let location = { lat: whois.res["latitude"] , lng: whois.res["longitude"] };   
+            let map = new google.maps.Map(document.getElementById("map"), {
+                    zoom: 4,
+                    center: location,
+                });
+            let marker = new google.maps.Marker({
+                position: location,
+                map: map,
+            });
+            
+                 
+            
             }
             get_nmap_port(ip_address)
         }
@@ -471,4 +483,19 @@
         get_dns_family()
         // get_whatcms()
     </script>
+    <!-- <script>
+        function initMap() {
+                let location = { lat: -25.344, lng: 131.031 };
+                let map = new google.maps.Map(document.getElementById("map"), {
+                    zoom: 4,
+                    center: location,
+                });
+                let marker = new google.maps.Marker({
+                    position: location,
+                    map: map,
+                });
+        }
+        window.initMap = initMap;
+    </script> -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDeyB29f2HbX747Kqlb34njGl5LDvv5awE&callback=initMap"></script>
 {% endblock %}

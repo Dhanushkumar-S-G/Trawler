@@ -42,3 +42,7 @@ class WhatCms(models.Model):
     case_obj = models.OneToOneField(Case,on_delete=models.CASCADE,related_name="related_whatcms_details")
     res = models.JSONField(null=True,blank=True)
                 
+
+class MalwareFile(models.Model):
+    case_obj = models.ForeignKey(Case,on_delete=models.CASCADE,related_name="related_malware_files")
+    

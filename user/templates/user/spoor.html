@@ -5,6 +5,11 @@
 <link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
 {% endblock%}
 {% block content %}
+<style>
+    #map{
+
+    }
+</style>
 <div id="content">
     <div class="container-fluid">
         <!-- <div class="card shadow mb-4">
@@ -183,7 +188,7 @@
                 toBeAdded = `<div class="col-6">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">WhoIs</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Domain Details</h6>
                             </div>
                             <div class="card-body" style="color:red">
                                 Sorry details could not be fetched
@@ -197,7 +202,7 @@
             <div class="col-6">
             <div class="card shadow mb-4">
                             <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Whois</h6>
+                                <h6 class="m-0 font-weight-bold text-primary">Domain Details</h6>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -225,6 +230,18 @@
                         </div>`
 
             outer.insertAdjacentHTML("beforeend", toBeAdded)
+
+            // function initMap() {
+            //     const uluru = { lat: -25.344, lng: 131.031 };
+            //     const map = new google.maps.Map(document.getElementById("map"), {
+            //         zoom: 4,
+            //         center: uluru,
+            //     });
+            //     const marker = new google.maps.Marker({
+            //         position: uluru,
+            //         map: map,
+            //     });
+            // }
 
             }
             get_nmap_port(ip_address)

@@ -317,6 +317,13 @@ def whatcms(request):
         return JsonResponse(data=serialized_data)
 
 
+def osscan(request):
+    ip_address = request.GET.get("ip_address",None)
+    case_number = request.GET.get("case_number",None)
+    if case_number in ['',None]:
+        pass
+    else:
+        case_obj = Case.objects.get(case_number = case_number)
 
 
 

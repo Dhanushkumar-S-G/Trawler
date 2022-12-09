@@ -199,13 +199,51 @@
             url = `/api/ssl_certificate/?domain=kct.ac.in&case_number=1234`
             let ssl_certificate = await fetch(url)
             ssl_certificate = await ssl_certificate .json()
-            // console.log("get_ssl"+ JSON.stringify(ssl_certificate))
+            toBeAdded = `
+            <div class="col-12">
+            <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Related Subdomains</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Logged At</th>
+                                                <th>Not Before</th>
+                                                <th>Not After</th>
+                                                <th>Comman Name</th>
+                                                <th>Issuer Name</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        `
+
+            for(let key in ssl_certificate.res["ssl_certificate"]){
+                toBeAdded += `<tr>
+                                <td>${ssl_certificate.res["ssl_certificate"][key]["logged_at"]}</td>
+                                <td>${ssl_certificate.res["ssl_certificate"][key]["not_before"]}</td>
+                                <td>${ssl_certificate.res["ssl_certificate"][key]["not_after"]}</td>
+                                <td>${ssl_certificate.res["ssl_certificate"][key]["name"]}</td>
+                                <td>${ssl_certificate.res["ssl_certificate"][key]["ca"]["name"]}</td>                               
+                            </tr>`
+            }
+            toBeAdded  += `
+            </tbody>
+            </table>
+            </div></div></div>
+                        </div>
+                        </div>`
+
+            outer.insertAdjacentHTML("beforeend", toBeAdded)
+            
+            console.log("get_ssl"+ JSON.stringify(ssl_certificate))
         }
         async function get_wappalyzer(){
             url = `/api/wappalyzer/?url=https://www.kct.ac.in/&case_number=1234`
             let wappalyzer= await fetch(url)
             wappalyzer = await wappalyzer.json()
-            console.log("get_wapp"+ JSON.stringify(wappalyzer.res))
             toBeAdded = `<div class="col-6">
             <div class="card shadow mb-4">
                             <div class="card-header py-3">
@@ -245,8 +283,6 @@
             url = `/api/nmap_port/?ip_address=${ip_address}&case_number=1234`
             let nmap_port = await fetch(url)
             nmap_port = await nmap_port.json()
-            console.log(JSON.stringify(nmap_port))
-            console.log("get_nmap"+nmap_port.res[20])
 
             toBeAdded = `
             <div class="col-6">
@@ -286,33 +322,106 @@
             url = `/api/dns_enum/?domain=kct.ac.in&case_number=1234`
             let ssl_certificate = await fetch(url)
             ssl_certificate = await ssl_certificate.json()
-            console.log("ssl_certificate" + ssl_certificate)
+            toBeAdded = `
+            <div class="col-6">
+            <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Server Status</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Server Type</th>
+                                                <th>Respected Data</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        `
+
+            for(let key in ssl_certificate.res){
+                toBeAdded += `<tr>
+                                <td>${key}</td>
+                                <td>${ssl_certificate.res[key]}</td>
+                                
+                            </tr>`
+            }
+            toBeAdded  += `
+            </tbody>
+            </table>
+            </div></div></div>
+                        </div>
+                        </div>`
+
+            outer.insertAdjacentHTML("beforeend", toBeAdded)
+        
         }
         async function get_dns_family(){
             url = `/api/dns_for_family/?domain=kct.ac.in&case_number=1234`
             let dns_for_family= await fetch(url)
             dns_for_family = await dns_for_family.json()
-            console.log("get_dns" + dns_for_family)
+            toBeAdded = `<div class="col-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Is it Adult content webpage</h6>
+                            </div>
+                            <div class="card-body">
+                                ${dns_for_family.result["kct.ac.in"]}
+                            </div>
+                        </div>
+                        </div>`
 
+            outer.insertAdjacentHTML("beforeend", toBeAdded)
         }
         async function get_subdomain_enum(){
             url = `/api/subdomain_enum/?domain=kct.ac.in&case_number=1234`
             let subdomain_enum = await fetch(url)
             subdomain_enum = await subdomain_enum.json()
-            console.log("get_sub"+subdomain_enum) 
+            toBeAdded = `
+            <div class="col-6">
+            <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Related Subdomains</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Subdomains</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        `
+
+            for(let key in subdomain_enum.res["subdomain"]){
+                toBeAdded += `<tr>
+                                <td>${subdomain_enum.res["subdomain"][key]}</td>                               
+                            </tr>`
+            }
+            toBeAdded  += `
+            </tbody>
+            </table>
+            </div></div></div>
+                        </div>
+                        </div>`
+
+            outer.insertAdjacentHTML("beforeend", toBeAdded)
+            
         }
-        async function get_whatcms(){
-            url = `/api/whatcms/?domain=kct.ac.in&case_number=1234`
-            let whatcms = await fetch(url)
-            whatcms = await whatcms.json()
-            console.log("whatcms"+whatcms)
-        }
+        // async function get_whatcms(){
+        //     url = `/api/whatcms/?domain=kct.ac.in&case_number=1234`
+        //     let whatcms = await fetch(url)
+        //     whatcms = await whatcms.json()
+        //     console.log("whatcms"+whatcms)
+        // }
         get_ip()
         get_ssl_cert()
         get_wappalyzer()
         get_dns_enum()
         get_dns_family()
         get_subdomain_enum()
-        get_whatcms()
+        // get_whatcms()
     </script>
 {% endblock %}

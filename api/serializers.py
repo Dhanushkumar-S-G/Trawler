@@ -47,3 +47,9 @@ class CaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Case
         fields = "__all__"
+
+
+class OsScanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OsScan
+        fields = "__all__"

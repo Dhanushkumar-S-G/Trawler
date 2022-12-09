@@ -163,8 +163,6 @@
 
     <script>
         let outer = document.getElementById("outer_container")
-        let lat;
-        let longi;
         async function get_ip(){
             url = `/api/getip/?domain={{domain}}&case_number={{case_number}}`
             let ip_address = await fetch(url)
@@ -186,7 +184,6 @@
             url = `/api/whois/?ip_address=${ip_address}&case_number={{case_number}}`
             let whois = await fetch(url)
             whois = await whois.json()
-            console.log(JSON.stringify(whois))
             if (whois.res.error == true){
                 toBeAdded = `<div class="col-6">
                         <div class="card shadow mb-4">
@@ -345,6 +342,7 @@
             url = `/api/nmap_port/?ip_address=${ip_address}&case_number={{case_number}}`
             let nmap_port = await fetch(url)
             nmap_port = await nmap_port.json()
+            console.log(JSON.stringify(nmap_port))
 
             toBeAdded = `
             <div class="col-6">
@@ -358,16 +356,21 @@
                                         <thead>
                                             <tr>
                                                 <th>Port Number</th>
-                                                <th>Status</th>
+                                                <th>State</th>
+                                                <th>Product</th>
+
                                             </tr>
                                         </thead>
                                         <tbody>
                                         `
-
-            for (let key in nmap_port.res){
+            f_key = Object.keys(nmap_port.res)[0] 
+            // console.log(typeof(nmap_port.res[f_key]["ports"]))
+            for (let key in nmap_port.res[f_key]["ports"]){
+                console.log("kerasdf"+key)
                 toBeAdded += `<tr>
-                                <td>${key}</td>
-                                <td>${nmap_port.res[key]}</td>
+                                <td>${nmap_port.res[f_key]["ports"][key]["portid"]}</td>
+                                <td>${nmap_port.res[f_key]["ports"][key]["state"]}</td>
+                                <td>${nmap_port.res[f_key]["ports"][key]["service"]["product"]}</td>
                                 
                             </tr>`
             }
@@ -379,7 +382,7 @@
                         </div>`
 
             outer.insertAdjacentHTML("beforeend", toBeAdded)
-            get_wappalyzer()
+            get_os_scan(ip_address)
         }
         async function get_dns_enum(){
             url = `/api/dns_enum/?domain={{domain}}&case_number={{case_number}}`
@@ -480,6 +483,48 @@
         //     whatcms = await whatcms.json()
         //     console.log("whatcms"+whatcms)
         // }
+
+        async function get_os_scan(ip_address){
+            url = `/api/os_scan/?ip_address=164.100.134.104&case_number={{case_number}}`
+            let os_scan = await fetch(url)
+            os_scan = await os_scan.json()
+            console.log(os_scan.res["164.100.134.104"]["osmatch"])
+            toBeAdded = `
+            <div class="col-6">
+            <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Os Scan</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th>Accuracy</th>
+                                                <th>CPE</th>
+                                                <th>Name</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        `
+            for(let i =0;i<3;i++){
+                toBeAdded += `<tr>
+                    <td>${os_scan.res["164.100.134.104"]["osmatch"][i]["accuracy"]}%</td>
+                    <td>${os_scan.res["164.100.134.104"]["osmatch"][i]["cpe"]}</td>
+                    <td>${os_scan.res["164.100.134.104"]["osmatch"][i]["name"]}</td>
+                    </tr>
+                           `
+            }
+            toBeAdded  += `
+            </tbody>
+            </table>
+            </div></div></div>
+                        </div>
+                        </div>`
+
+            outer.insertAdjacentHTML("beforeend", toBeAdded)
+            get_wappalyzer()
+        }
         get_dns_family()
         // get_whatcms()
     </script>

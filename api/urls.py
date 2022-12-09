@@ -10,6 +10,6 @@ urlpatterns = [
     path("dns_enum/",dns_enum,name="api-dns-enum"),
     path("dns_for_family/",dns_for_family,name="api-dns-for-family"),
     path("subdomain_enum/",subdomain_enum,name="api-subdomain-enum"),   
-    path("whatcms/",whatcms,name="api-whatcms"),
+    path("os_scan/",osscan,name="api-os-scan"),
     
 ]

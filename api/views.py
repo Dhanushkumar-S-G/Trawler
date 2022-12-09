@@ -22,6 +22,7 @@ class DateTimeEncoder(json.JSONEncoder):
 def get_ip(request):
     case_number = request.GET.get("case_number",None)
     domain = request.GET.get("domain",None)
+    print(domain)
     ip_address = socket.gethostbyname(domain)
     if case_number in [None ,'']:
         return JsonResponse({"ip_adrdess":ip_address})
@@ -110,28 +111,18 @@ def nmap_port(request):
     case_number = request.GET.get("case_number",None)
     ip_address = request.GET.get("ip_address",None)
     if case_number in [None, ""]:
-        port=[20,21,22,23,25,53,80,110,119,123,143,161,194,443]
-        target = ip_address
-        scanner = nmap.PortScanner()
-        results =dict()
-        for i in port:
-            res = scanner.scan(target, str(i))
-            res = res['scan'][target]['tcp'][i]['state']
-            results[i] = res
+        import nmap3
+        scanner = nmap3.Nmap()
+        results = scanner.nmap_version_detection(ip_address)
         return JsonResponse(results)
     else:
         case_obj = Case.objects.get(case_number = case_number)
         nmap_obj, created = NmapPort.objects.get_or_create(case_obj=case_obj)
         if created:
-            port=[20,21,22,23,25,53,80,110,119,123,143,161,194,443]
-            target = ip_address
-            scanner = nmap.PortScanner()
-            results =dict()
-            for i in port:
-                res = scanner.scan(target, str(i))
-                print(res)
-                res = res['scan'][target]['tcp'][i]['state']
-                results[i] = res
+            import nmap3
+            scanner = nmap3.Nmap()
+
+            results = scanner.nmap_version_detection(ip_address)
             nmap_obj.res = results
             nmap_obj.save()
         
@@ -262,68 +253,26 @@ def subdomain_enum(request):
     
 
 
-def whatcms(request):
-    case_number = request.GET.get("case_number",None)
-    domain = request.GET.get("domain",None)
-    if case_number in ['',None]:
-        base_url = 'https://whatcms.org/API/Tech?key='
-        base_url1 = '&url='
-        key = 'wc5teh0nb4pre63xmlazj4jq21wvvgm74wmgrnbgr2b6b8wipp43q9jj814otr6hj54qds'
-
-        request_url = base_url+key+base_url1+domain
-        response = requests.get(request_url)
-        data = response.json()
-
-        PLUGIN = []
-        VERSION = []
-        CATEGORIES = []
-
-        for i in data['results']:
-            PLUGIN.append(i['name'])
-            if i['version'] == "":
-                VERSION.append("NOT FOUND")
-            else:
-                VERSION.append(i['version'])
-            CATEGORIES += i['categories']
-
-        return JsonResponse({"plugin":PLUGIN,"version":VERSION,"categories":CATEGORIES})
-    else:
-        case_obj = Case.objects.get(case_number = case_number)
-        what_obj,created = WhatCms.objects.get_or_create(case_obj=case_obj)
-        if created:
-            base_url = 'https://whatcms.org/API/Tech?key='
-            base_url1 = '&url='
-            key = 'wc5teh0nb4pre63xmlazj4jq21wvvgm74wmgrnbgr2b6b8wipp43q9jj814otr6hj54qds'
-
-            request_url = base_url+key+base_url1+domain
-            response = requests.get(request_url)
-            data = response.json()
-
-            PLUGIN = []
-            VERSION = []
-            CATEGORIES = []
-
-            for i in data['results']:
-                PLUGIN.append(i['name'])
-                if i['version'] == "":
-                    VERSION.append("NOT FOUND")
-                else:
-                    VERSION.append(i['version'])
-                CATEGORIES += i['categories']
-            what_obj.res = {"plugin":PLUGIN,"version":VERSION,"categories":CATEGORIES }
-            what_obj.save()
-
-        serialized_data = WhatCmsSerializer(what_obj).data
-        return JsonResponse(data=serialized_data)
-
-
 def osscan(request):
     ip_address = request.GET.get("ip_address",None)
     case_number = request.GET.get("case_number",None)
     if case_number in ['',None]:
-        pass
+        import nmap3
+        scanner = nmap3.Nmap()
+        os_results = scanner.nmap_os_detection(ip_address)
+        return JsonResponse(os_results)
     else:
         case_obj = Case.objects.get(case_number = case_number)
+        osscan_obj, created = OsScan.objects.get_or_create(case_obj=case_obj)
+        if created:
+            import nmap3
+            scanner = nmap3.Nmap()
+            os_results = scanner.nmap_os_detection(ip_address)
+            osscan_obj.res = os_results
+            osscan_obj.save()
+        
+        serialized_data = OsScanSerializer(osscan_obj).data
+        return JsonResponse(data=serialized_data)
 
 
 

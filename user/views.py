@@ -1,5 +1,12 @@
 from django.shortcuts import render,redirect
 from .forms import *
+from email.parser import HeaderParser
+import time
+import dateutil.parser
+
+from datetime import datetime
+import re
+
 
 def dashboard(request):
     return render(request,"user/index.html")
@@ -29,3 +36,140 @@ def spoor(request,case_number):
         "url":str(case_obj.link),
         "case_number":case_obj.case_number
     })
+
+
+def dateParser(line):
+    try:
+        r = dateutil.parser.parse(line, fuzzy=True)
+    except ValueError:
+        r = re.findall('^(.*?)\s*(?:\(|utc)', line, re.I)
+        if r:
+            r = dateutil.parser.parse(r[0])
+    return r
+
+
+def utility_processor():
+    def getCountryForIP(line):
+        ipv4_address = re.compile(r"""
+            \b((?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.
+            (?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.
+            (?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)\.
+            (?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d))\b""", re.X)
+        ip = ipv4_address.findall(line)
+        if ip:
+            ip = ip[0]  # take the 1st ip and ignore the rest
+            if IP(ip).iptype() == 'PUBLIC':
+                r = reader.country(ip).country
+                if r.iso_code and r.name:
+                    return {
+                        'iso_code': r.iso_code.lower(),
+                        'country_name': r.name
+                    }
+    return dict(country=getCountryForIP)
+
+def getHeaderVal(h, data, rex='\s*(.*?)\n\S+:\s'):
+    r = re.findall('%s:%s' % (h, rex), data, re.X | re.DOTALL | re.I)
+    if r:
+        return r[0].strip()
+    else:
+        return None
+    
+
+def email_header(header):
+    mail_data = header
+    r = {}
+    n = HeaderParser().parsestr(mail_data)
+    received = n.get_all('Received')
+    if received:
+        received = [i for i in received if ('from' in i or 'by' in i)]
+    else:
+        received = re.findall(
+            'Received:\s*(.*?)\n\S+:\s+', mail_data, re.X | re.DOTALL | re.I)
+    c = len(received)
+    for i in range(len(received)):
+        if ';' in received[i]:
+            line = received[i].split(';')
+        else:
+            line = received[i].split('\r\n')
+        line = list(map(str.strip, line))
+        line = [x.replace('\r\n', ' ') for x in line]
+        try:
+            if ';' in received[i + 1]:
+                next_line = received[i + 1].split(';')
+            else:
+                next_line = received[i + 1].split('\r\n')
+            next_line = list(map(str.strip, next_line))
+            next_line = [x.replace('\r\n', '') for x in next_line]
+        except IndexError:
+            next_line = None
+
+
+        if line[0].startswith('from'):
+            data = re.findall(
+                """
+                from\s+
+                (.*?)\s+
+                by(.*?)
+                (?:
+                    (?:with|via)
+                    (.*?)
+                    (?:\sid\s|$)
+                    |\sid\s|$
+                )""", line[0], re.DOTALL | re.X)
+        else:
+            data = re.findall(
+                """
+                ()by
+                (.*?)
+                (?:
+                    (?:with|via)
+                    (.*?)
+                    (?:\sid\s|$)
+                    |\sid\s
+                )""", line[0], re.DOTALL | re.X)
+
+
+    summary = {
+        'From': n.get('From') or getHeaderVal('from', mail_data),
+        'To': n.get('to') or getHeaderVal('to', mail_data),
+        'Cc': n.get('cc') or getHeaderVal('cc', mail_data),
+        'Subject': n.get('Subject') or getHeaderVal('Subject', mail_data),
+        'MessageID': n.get('Message-ID') or getHeaderVal('Message-ID', mail_data),
+        'Date': n.get('Date') or getHeaderVal('Date', mail_data),
+    }
+    ips = set(re.findall( r'[0-9]+(?:\.[0-9]+){3}', mail_data ))
+    emails = re.findall(r"[a-z0-9\.\-+_]+@[a-z0-9\.\-+_]+\.[a-z]+", mail_data)
+    regex = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
+    urls = re.findall(regex,mail_data) 
+    
+    security_headers = ['Received-SPF', 'Authentication-Results',
+                        'DKIM-Signature', 'ARC-Authentication-Results']
+    
+    data = {
+        "ips":ips,
+        "emails":emails,
+        "urls":urls,
+        "security_headers":security_headers,
+        "summary":summary,
+        "n":n
+    }
+    return data
+    
+    
+
+
+
+def analyse_header(request):
+    if request.method == "POST":
+        header = request.POST.get("header")
+        data = email_header(header)
+        print("asdfasdfasdf",type(data["n"]))
+        return render(request,"user/analyse_header.html",{
+            "summary": data["summary"],
+            "ips":data["ips"],
+            "urls":data["urls"],
+            "emails":set(data["emails"]),
+            "is_true":True
+
+        })
+    return render(request,"user/analyse_header.html")

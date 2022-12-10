@@ -173,3 +173,49 @@ def analyse_header(request):
 
         })
     return render(request,"user/analyse_header.html")
+
+import hashlib
+from virus_total_apis import PublicApi as VirusTotalPublicApi
+import subprocess
+import json
+def malware_analysis(request):
+    if request.method == "POST":
+        print(request.FILES)
+        form = MalwareUploadForm(request.POST,request.FILES)
+        print(form.is_valid())
+        if form.is_valid():
+            case_number = form.cleaned_data.get("case_number")
+            file = form.cleaned_data.get("malware_file")
+            case_obj = Case.objects.get(case_number=case_number)
+            mal_obj = MalwareFile.objects.create(case_obj=case_obj,malware_file = file)
+            mal_obj.save()
+            file_type_output = subprocess.run(["/media/dhanush/COLLEGE/godseye/user/filetype.sh",mal_obj.malware_file.path],capture_output=True)
+            file_type_output = file_type_output.stdout
+            file_type_output = file_type_output.decode('ascii')
+
+            
+            hashing_output = subprocess.run(["/media/dhanush/COLLEGE/godseye/user/hashing.sh",mal_obj.malware_file.path],capture_output=True)
+            hashing_output = hashing_output.stdout
+            hashing_output = hashing_output.decode('ascii')
+
+            hash_ = hashing_output[10:51]
+            
+            import hashlib
+            from virus_total_apis import PublicApi as VirusTotalPublicApi
+            API_KEY = "544563dd7491894b32d1a605d3358ec23a8ed72b56968af6eb1565e52cc43ef1"
+            EICAR = hash_.encode('utf-8')
+            EICAR_SHA1 = hashlib.sha1(EICAR).hexdigest()
+            vt = VirusTotalPublicApi(API_KEY)   
+
+            response = vt.get_file_report(EICAR_SHA1)
+            virus_total = json.dumps(response, sort_keys=False, indent=4)
+            form = MalwareUploadForm()
+            return render(request,"user/malware_analysis.html",{
+        "form":form,"file_type_output":file_type_output,"hashing_output":hashing_output,"is_true":True,"virus_total":virus_total
+    })            
+
+    form = MalwareUploadForm()
+
+    return render(request,"user/malware_analysis.html",{
+        "form":form
+    })

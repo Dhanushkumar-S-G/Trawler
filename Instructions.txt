@@ -24,7 +24,7 @@ Domain Scan Module
 
 4. In the Email Header Analysis, Enter the Email header and you will get the Details categorized from the email header.
 
-5. In the Malware Analysis, Upload the Malware you want to analyze and the Details from the malware will be displayed
+5. In the Malware Analysis, Upload the Malware from the Sample Malware Folder (Caution!!! Use a Virtual Machine as it a Windows Based Malware) and the Details from the malware will be displayed
 
 6. In the Spam Detection Module, Open the file spam.ipynb file. Enter the Message in "your_message" variable as you want to detect it as Spam or not.
 

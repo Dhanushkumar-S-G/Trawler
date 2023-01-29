@@ -1,6 +1,14 @@
-# SPOOR - TEAM SCRIPT KIDDIES
+# TRAWLER - TEAM SCRIPT KIDDIES
 
-An easy-to-use User Interface that can retrieve information about the domain's origin. Using Open-Source, Free API, and MIT Licensed tools, our solution focuses on gathering information and traces back to the attacker. We automate scripts like NMAP Scripting Engine (Network Mapper), and APIs like Shodan, Wappalyzer, WHOIS, URL Extender, DNS Resolver, and concepts like NS Lookup, SSL Certificate Gathering, Username Enumeration, Favicon Examination, DNS Enumeration, Subdomain Enumeration, Mobile Number Lookup, Email ID Lookup, Address Parsing in a webpage, Adult Site Identifier and collecting data from Censys Database to trace IP. Implementing the framework will acquire the origin of the phishing message
+An easy-to-use User Interface that can retrieve information about the domain's origin. Using Open-Source, Free API, and MIT Licensed tools, our solution focuses on gathering information and traces back to the attacker. We automate scripts like NMAP Scripting Engine (Network Mapper), and APIs like Shodan, Wappalyzer, WHOIS, URL Extender, DNS Resolver, and concepts like NS Lookup, SSL Certificate Gathering, Username Enumeration, Favicon Examination, DNS Enumeration, Subdomain Enumeration, Mobile Number Lookup, Email ID Lookup, Address Parsing in a webpage, Adult Site Identifier and collecting data from Censys Database to trace IP. Implementing the framework will acquire the origin of the phishing message.
+
+A web tool which gathers and organizes information from a variety of sources such as social media, websites, and other online platforms into graph theory inspired from Bloodhound.
+
+Analyzing trends or patterns in the acquired data using ML algorithm.
+
+The user is given a graphical UI to compare and categorise data according to factors like location, time, activity, repeat of spam, etc., which may be depicted in several graph forms like line, bar, pie, and improved versions like heat map, gauge chart, stacked venn diagrams, etc.
+Based on the correlation between various data kinds, the Data Dump from mobile towers can be optimised for correlation.
+
 
 ## Note:
 
@@ -11,10 +19,10 @@ An easy-to-use User Interface that can retrieve information about the domain's o
 
 1. Go to the Main Folder
 
-To deploy this project run
+To run this project
 
 ```python
-  npm run deploy
+python manage.py runserver
 ```
 
 2. Now open the browser and enter the address 127.0.0.1:8000
@@ -33,6 +41,3 @@ To deploy this project run
 
 6. In the Spam Detection Module, Open the file spam.ipynb file. Enter the Message in "your_message" variable as you want to detect it as Spam or not.
 
-## Refer our Demo Video:
-
-https://youtu.be/0OmTgwTaBW4

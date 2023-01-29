@@ -12,7 +12,7 @@
     <meta name="description" content=""/>
     <meta name="author" content=""/>
 
-    <title>Spoor</title>
+    <title>Trawler</title>
 
     <!-- Custom fonts for this template-->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
@@ -65,13 +65,21 @@
         <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center"
            href="#">
-            <div class="sidebar-brand-text mx-3">Spoor</div>
+            <div class="sidebar-brand-text mx-3">Trawler</div>
         </a>
 
         <!-- Divider -->
         <hr class="sidebar-divider my-0"/>
 
         <!-- Nav Item - Dashboard -->
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'mobile-search' %}">
+                <i class="fas fa-search"></i>
+                <span>Search By Mobile</span>
+            </a>
+        </li>
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0"/>
 
         <li class="nav-item">
             <a class="nav-link" href="{% url 'scan' %}">
@@ -80,7 +88,7 @@
             </a>
         </li>
         <!-- Divider -->
-        <hr class="sidebar-divider"/>
+        <hr class="sidebar-divider my-0"/>
         <li class="nav-item">
             <a class="nav-link" href="{% url 'email-header-analyse' %}">
                 <i class="fas fa-fw fa-table" aria-hidden="true"></i>
@@ -88,7 +96,7 @@
             </a>        
         </li>
         <!-- Divider -->
-        <hr class="sidebar-divider"/>
+        <hr class="sidebar-divider my-0"/>
         <li class="nav-item">
             <a class="nav-link" href="{% url 'malware-analysis' %}">
                 <i class="fas fa-fw fa-table" aria-hidden="true"></i>

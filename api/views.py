@@ -10,6 +10,7 @@ import nmap
 import socket
 import json
 import datetime
+import logging
 
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, z):
@@ -48,6 +49,7 @@ def whois(request):
         case_obj = Case.objects.get(case_number = case_number)
         whois_obj, created = WhoIs.objects.get_or_create(case_obj=case_obj)
         if created:
+
             base_url1 = "https://ipapi.co/"
             base_url2 = "/json/"
             api_url = base_url1 + str(ip_address) + base_url2
@@ -58,9 +60,6 @@ def whois(request):
         serialized_data = WhoIsSerializer(whois_obj).data
         print(serialized_data)
         return JsonResponse(serialized_data)
-
-
-
 
 
 def ssl_certificate(request):
@@ -83,7 +82,6 @@ def ssl_certificate(request):
         return JsonResponse(data=serialized_data)
     
 
-
 def wappalyzer(request):
     case_number = request.GET.get("case_number",None)
     url = request.GET.get("url",None)
@@ -105,8 +103,6 @@ def wappalyzer(request):
         return JsonResponse(data=serialized_data)
 
 
-
-
 def nmap_port(request):
     case_number = request.GET.get("case_number",None)
     ip_address = request.GET.get("ip_address",None)
@@ -121,7 +117,6 @@ def nmap_port(request):
         if created:
             import nmap3
             scanner = nmap3.Nmap()
-
             results = scanner.nmap_version_detection(ip_address)
             nmap_obj.res = results
             nmap_obj.save()
@@ -129,7 +124,6 @@ def nmap_port(request):
         serialized_data = NmapPortSerializer(nmap_obj).data
         return JsonResponse(data=serialized_data)
         
-
 
 def dns_enum(request):
     case_number = request.GET.get("case_number",None)
@@ -182,9 +176,6 @@ def dns_enum(request):
         serialized_data = DnsEnumSerializer(dns_obj).data
         return JsonResponse(data=serialized_data)
 
-
-
-
     
 def dns_for_family(request):
     case_number = request.GET.get("case_number",None)
@@ -202,7 +193,6 @@ def dns_for_family(request):
         case_obj.save()
 
     return JsonResponse(data)  
-
 
 
 def subdomain_enum(request):
@@ -248,10 +238,10 @@ def subdomain_enum(request):
                     pass 
             sub_obj.res = {"subdomain":subdomain_store}
             sub_obj.save()
+        print("insideeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
         serialized_data = SubDomainSerializer(sub_obj).data
         return JsonResponse(data=serialized_data)
     
-
 
 def osscan(request):
     ip_address = request.GET.get("ip_address",None)
@@ -279,4 +269,241 @@ def osscan(request):
 
 
 
+
+
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+import selenium
+import time
+from selenium.webdriver.common.keys import Keys
+
+
+user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36"
+options = webdriver.ChromeOptions()
+options.headless = True
+options.add_argument("user-data-dir=C:\\Users\\dhanu\\AppData\\Local\\Google\\Chrome\\User Data")
+options.add_argument(f'user-agent={user_agent}')
+options.add_argument("--window-size=1920,1080")
+options.add_argument('--ignore-certificate-errors')
+options.add_argument('--allow-running-insecure-content')
+options.add_argument("--disable-extensions")
+options.add_argument("--proxy-server='direct://'")
+options.add_argument("--proxy-bypass-list=*")
+options.add_argument("--start-maximized")
+options.add_argument('--disable-gpu')
+options.add_argument('--disable-dev-shm-usage')
+options.add_argument('--no-sandbox')
+driver = webdriver.Chrome(options=options)
+
+# driver.get("https://web.whatsapp.com/")
+# time.sleep(20)
+# try:
+#     hash = driver.find_element(By.XPATH ,"//*[@id=\"app\"]/div/div/div[3]/div[1]/div/div/div[2]/div")
+    
+#     logging.warning("Not logged in -- Please login with the follwing hash")
+#     logging.info(f"Login with the hash --- {hash.get_attribute('data-ref')}")
+#     time.sleep(120)
+
+# except selenium.common.exceptions.NoSuchElementException:
+#     logging.info("Whatsapp App Logged in ")
+
+
+def check_whatsapp(request):
+    phone_number = request.GET.get("phone_number")
+    driver.get("https://web.whatsapp.com/")
+    url = f"https://web.whatsapp.com/send?phone={phone_number}&text&app_absent=0"
+    driver.get(url)
+    time.sleep(10)
+    try:
+        url = driver.find_element(By.XPATH ,"//*[@id=\"app\"]/div/span[2]/div/span/div/div/div/div/div/div[1]")
+        if url.text:
+            return JsonResponse(status=200,data={"status":"invalid"})
+    except selenium.common.exceptions.NoSuchElementException:
+        return JsonResponse(status=200,data={"status":"valid"})
+
+
+
+def check_number_owner(request):
+    phone_number = request.GET.get("phone_number")
+    driver.get("https://www.truecaller.com/reverse-phone-number-lookup")
+
+    input_field = driver.find_element(By.XPATH,'//*[@id="__nuxt"]/div/main/div[2]/section[1]/div/form/input')
+    time.sleep(3)
+    input_field.click()
+    input_field.send_keys(phone_number)
+    input_field.send_keys(Keys.ENTER)
+    time.sleep(3)
+    try:
+        address = driver.find_element(By.XPATH,'//*[@id="__nuxt"]/div/main/div[2]/div/div[2]/div/div/div[2]/div[2]/a[2]/div/div[2]')
+        name = driver.find_element(By.XPATH,'//*[@id="__nuxt"]/div/main/div[2]/div/div[2]/div/div/div[2]/header/div[1]/div[3]')
+    except Exception as e:
+        return JsonResponse({"error":"limit exceeded"})
+    return JsonResponse(status=200,data={"name":name.text,"address":address.text})
+
+
+import requests
+from bs4 import BeautifulSoup
+def number_lookup(request):
+    phone_number = request.GET.get("phone_number")
+    URL = f"https://calltracer.org/?q={phone_number}"
+    res = requests.get(URL)
+
+    soup = BeautifulSoup(res.content, 'html.parser') # If this line causes an error, run 'pip install html5lib' or install html5lib
+
+    output = {}
+    rows = soup.find_all('tr')
+    for i in rows:
+        row = i.find_all('td')
+        try:
+            output[row[0].text] = row[1].text
+        except:
+            pass
+    return JsonResponse(data=output)
+
+
+def search_breached_data(request):
+    search_field = request.GET.get("search_field")
+    url = f"https://haveibeenpwned.com/unifiedsearch/{search_field}"
+    driver.get(url)
+    try:
+        content = driver.find_element(By.XPATH,"/html/body/pre")
+        data = json.loads(content.text)
+    except:
+        data = {"oooh":"no data found"}
+    return JsonResponse(data=data)
+
+
+def name_lookup(request):
+    name = request.GET.get("name")
+
+    url = f"https://www.idcrawl.com/{name}"
+    headers = {
+        'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'
+    }
+    res = requests.get(url,headers=headers)
+    print("response code ",res.status_code) 
+    soup = BeautifulSoup(res.content, 'html.parser')
+
+    data = {}
+
+    images = soup.find("div",{"id":"images"})
+    image_links = [ x.find_all("a")[0]["href"]   for x in  images.find_all("li")]
+    data['images'] = image_links
+
+    instagram = soup.find("div",{"id":"instagram"})
+    instagram_ids = instagram.find_all("div",{"class":"gl-job-list-item"})
+    instagram_links = []
+    for instagram_id in instagram_ids:
+        try:
+            temp = {}
+            temp["profile"] = instagram_id.find_all("img")[0]['src']
+            detail = instagram_id.find_all("a")[0]
+            temp["id"] = detail.text
+            temp["link"] = detail['href']
+            instagram_links.append(temp)
+        except:
+            pass
+    data['instagram'] = instagram_links
+
+
+    twitter = soup.find("div",{"id":"twitter"})
+    twitter_ids = twitter.find_all("div",{"class":"gl-job-list-item"})
+    twitter_links = []
+    for twitter_id in twitter_ids:
+        try:
+            temp = {}
+            temp["profile"] = twitter_id.find_all("img")[0]['src']
+            detail = twitter_id.find_all("a")[0]
+            temp["id"] = detail.text
+            temp["link"] = detail['href']
+            twitter_links.append(temp)
+        except:
+            pass
+    data['twitter'] = twitter_links
+
+
+    facebook = soup.find("div",{"id":"facebook"})
+    facebook_ids = facebook.find_all("div",{"class":"gl-job-list-item"})
+    facebook_links = []
+    for facebook_id in facebook_ids:
+        try:
+            temp = {}
+            temp["profile"] = facebook_id.find_all("img")[0]['src']
+            detail = facebook_id.find_all("a")[0]
+            temp["id"] = detail.text
+            temp["link"] = detail['href']
+            facebook_links.append(temp)
+        except:
+            pass
+    data['facebook'] = facebook_links
+
+
+    tiktok = soup.find("div",{"id":"tiktok"})
+    tiktok_ids = tiktok.find_all("div",{"class":"gl-job-list-item"})
+    tiktok_links = []
+    for tiktok_id in tiktok_ids:
+        try:
+            temp = {}
+            temp["profile"] = tiktok_id.find_all("img")[0]['src']
+            detail = tiktok_id.find_all("a")[0]
+            temp["id"] = detail.text
+            temp["link"] = detail['href']
+            temp["followers"] = tiktok_id.find_all("p")[0].text
+            tiktok_links.append(temp)
+        except:
+            pass
+    data['tiktok'] = tiktok_links
+
+    youtube = soup.find("div",{"id":"youtube"})
+    youtube_ids = youtube.find_all("div",{"class":"gl-job-list-item"})
+    youtube_links = []
+    for youtube_id in youtube_ids:
+        try:
+            temp = {}
+            temp["profile"] = youtube_id.find_all("img")[0]['src']
+            detail = youtube_id.find_all("a")[0]
+            temp["id"] = detail.text
+            temp["link"] = detail['href']
+            temp["subscribers"] = youtube_id.find_all("p")[0].text
+            youtube_links.append(temp)
+        except:
+            pass
+    data['youtube'] = youtube_links
+    
+    
+    linkedin = soup.find("div",{"id":"linkedin"})
+    linkedin_ids = linkedin.find_all("div",{"class":"gl-job-list-item"})
+    linkedin_links = []
+    for linkedin_id in linkedin_ids:
+        try:
+            temp = {}
+            temp["profile"] = linkedin_id.find_all("img")[0]['src']
+            detail = linkedin_id.find_all("a")[0]
+            temp["id"] = detail.text
+            temp["link"] = detail['href']
+            temp["desc"] = linkedin_id.find_all("p")[0].text
+            linkedin_links.append(temp)
+        except:
+            pass
+    data['linkedin'] = linkedin_links
+
+
+    usernames = soup.find("div",{"id":"gl-accordion-usernames-details"})
+    usernames_list = [x.text for x in usernames.find_all("a")]
+    data['usernames_list'] = usernames_list
+
+
+    web = soup.find("div",{"id":"web"})
+    web_items = web.find_all("div",{"class":"gl-job-list-item"})
+    web_links = []
+    for web_item in web_items:
+        temp = {}
+        temp["header"] = web_item.find_all("a")[0].text
+        temp["link"] = web_item.find_all("a")[0]["href"]
+        temp["desc"] = web_item.find_all("p")[0].text
+        web_links.append(temp)
+    data['web'] = web_links
+        
+    return JsonResponse(data=data)
 

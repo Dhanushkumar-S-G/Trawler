@@ -148,3 +148,7 @@ GOOGLE_MAPS_API = "AIzaSyDeyB29f2HbX747Kqlb34njGl5LDvv5awE"
 MEDIA_URL = '/media/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"

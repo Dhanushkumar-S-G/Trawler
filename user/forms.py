@@ -5,6 +5,11 @@ from .models import *
 class CaseCreationForm(forms.ModelForm):
     class Meta:
         model = Case
+        widgets = {
+            'case_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'domain': forms.TextInput(attrs={'class':'form-control'}),
+            'link' : forms.TextInput(attrs={'class':'form-control'})
+        }
         fields = ["case_number","domain","link"]
 
 

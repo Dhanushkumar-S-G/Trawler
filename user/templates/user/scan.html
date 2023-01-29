@@ -2,15 +2,8 @@
 {% load crispy_forms_tags %}
 {% block content %}
     <style>
-    input[type="text"]{
-        display: block;
-        width: 68vw;
-        margin: 15px;
-    }
-    label{
-        display: block;
-        margin: 15px;
-        text-align: left;
+    input {
+        width: 90%;
     }
 
     </style>
@@ -26,6 +19,7 @@
             <form action="" method="post">
                 {% csrf_token %}
                 {{ form|crispy }}
+                <br>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>

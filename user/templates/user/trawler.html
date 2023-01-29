@@ -240,7 +240,7 @@
                         `
 
             outer.insertAdjacentHTML("beforeend", toBeAdded) 
-            let location = { lat: whois.res["latitude"] , lng: whois.res["longitude"] };   
+            let location = { lat: 11.0118701 , lng:76.8971941 };   
             let map = new google.maps.Map(document.getElementById("map"), {
                     zoom: 4,
                     center: location,
@@ -508,12 +508,21 @@
                                         <tbody>
                                         `
             for(let i =0;i<3;i++){
-                toBeAdded += `<tr>
-                    <td>${os_scan.res["164.100.134.104"]["osmatch"][i]["accuracy"]}%</td>
-                    <td>${os_scan.res["164.100.134.104"]["osmatch"][i]["cpe"]}</td>
-                    <td>${os_scan.res["164.100.134.104"]["osmatch"][i]["name"]}</td>
-                    </tr>
-                           `
+                try{
+                    toBeAdded += `<tr>
+                        <td>${os_scan.res["164.100.134.104"]["osmatch"][i]["accuracy"]}%</td>
+                        <td>${os_scan.res["164.100.134.104"]["osmatch"][i]["cpe"]}</td>
+                        <td>${os_scan.res["164.100.134.104"]["osmatch"][i]["name"]}</td>
+                        </tr>
+                               `
+                }
+                catch(err){
+                    toBeAdded += `<tr>
+                        <td>Error</td>
+                        <td>Error</td>
+                        <td>Error</td>
+                        </tr>`
+                }
             }
             toBeAdded  += `
             </tbody>

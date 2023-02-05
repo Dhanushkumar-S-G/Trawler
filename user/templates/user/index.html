@@ -68,6 +68,15 @@
             <div class="sidebar-brand-text mx-3">Trawler</div>
         </a>
 
+        <hr class="sidebar-divider my-0"/>
+
+        <!-- Nav Item - Dashboard -->
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'create-case' %}">
+                <i class="fas fa-search"></i>
+                <span>Create Case</span>
+            </a>
+        </li> 
         <!-- Divider -->
         <hr class="sidebar-divider my-0"/>
 
@@ -82,12 +91,45 @@
         <hr class="sidebar-divider my-0"/>
 
         <li class="nav-item">
+            <a class="nav-link" href="{% url 'upload-dump' %}">
+                <i class="fas fa-search"></i>
+                <span>Upload dump file</span>
+            </a>
+        </li>
+        <!-- Divider -->
+        <hr class="sidebar-divider my-0"/>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'upi-recon' %}">
+                <i class="fas fa-search"></i>
+                <span>UPI Recon</span>
+            </a>
+        </li>
+
+        <hr class="sidebar-divider my-0"/>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'name-lookup' %}">
+                <i class="fas fa-search"></i>
+                <span>Name Lookup</span>
+            </a>
+        </li>
+
+        <hr class="sidebar-divider my-0"/>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'twitter-details' %}">
+                <i class="fas fa-search"></i>
+                <span>Twitter Lookup</span>
+            </a>
+        </li>
+        <!-- Divider -->
+        <!-- <hr class="sidebar-divider my-0"/>
+
+        <li class="nav-item">
             <a class="nav-link" href="{% url 'scan' %}">
                 <i class="fas fa-search"></i>
                 <span>Scan</span>
             </a>
         </li>
-        <!-- Divider -->
         <hr class="sidebar-divider my-0"/>
         <li class="nav-item">
             <a class="nav-link" href="{% url 'email-header-analyse' %}">
@@ -95,7 +137,6 @@
                 <span>Email Header Analyse</span>
             </a>        
         </li>
-        <!-- Divider -->
         <hr class="sidebar-divider my-0"/>
         <li class="nav-item">
             <a class="nav-link" href="{% url 'malware-analysis' %}">
@@ -103,9 +144,8 @@
                 <span>Malware Analysis</span>
             </a>        
         </li>
-        <!-- Divider -->
         <hr class="sidebar-divider"/>
-    
+     -->
 
 
         <!-- Sidebar Toggler (Sidebar) -->
@@ -135,20 +175,25 @@
                 </button>
 
                 <!-- Topbar Police_LOGO -->
-                <img src="{% static 'images/logo.png' %}" width="120" alt="">
+                <img src="{% static 'images/logo.png' %}" width="80" alt="">
 
                 
 
             </nav>
             <!-- End of Topbar -->
 
-
             <!-- Begin Page Content -->
 
             {% if messages %}
                 {% for message in messages %}
-                    <div class="alert {{ message.tags }}">{{ message }}</div>
-                {% endfor %}
+                <div class="alert {{message.tags}} alert-dismissible fade show" id = "msg" role="alert">
+                    <i class="bi bi-exclamation-octagon me-1"></i>
+                    {{message}}
+                    <button type="button" class="close" aria-label="Close" onclick="removeMessage()">
+                        <span aria-hidden="true">&times; </span>
+                      </button>
+                </div>
+            {% endfor %}
             {% endif %}
 
             {% block content %}
@@ -237,7 +282,17 @@
 {#<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>#}
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
+<script>
+    var message_ele = document.getElementById("msg");
+    if (message_ele != null){
+    setTimeout(function(){
+       message_ele.style.display = "none";
+    }, 10000);}
 
+    function removeMessage(){
+        message_ele.style.display = "none";
+    }
+      </script>
 {% block script_references %}
 
 {% endblock script_references %}

@@ -1,0 +1,92 @@
+{% extends 'user/index.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<style>
+    /* input[type="text"]{
+        display: block;
+        width: 68vw;
+        margin: 15px;
+    }
+    label{
+        display: block;
+        margin: 15px;
+        text-align: left;
+    } */
+
+</style>
+<div class="container" style="text-align: center;" >
+    <div class="card shadow mb-4">
+        <!-- Card Header - Dropdown -->
+        <div
+            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Twitter Enumeration</h6>   
+        </div>
+        <!-- Card Body -->
+        <div class="card-body" style="display:block ;">
+            <div class="form-group">
+                <label for="exampleInputEmail1">Enter Twitter Id</label>
+                <input type="text" class="form-control" id="search_field" aria-describedby="emailHelp" >
+            </div>
+            <button  class="btn btn-primary" onclick="input_check()" id="submitbutton" >Submit</button>
+        </div>
+    </div>
+</div>
+<div id="output" class="container" >
+    <div class="row" id="outer_container">
+    </div>
+</div>
+{% endblock %}
+
+{% block script_references %}
+<script>
+    // document.getElementById("submitbutton").addEventListener("onclick",input_check())
+    async function input_check(){
+        let search_field = document.getElementById("search_field").value
+        if (search_field == "" || search_field==" " || search_field ==null){
+            alert("Please enter a valid input");
+        }
+        else{
+            outer =  document.getElementById("outer_container")
+            url = `/api/get_twitter_bio?username=${search_field}`
+            let twitter_details = await fetch(url)
+            twitter_details = await twitter_details.json()
+            console.log(twitter_details)
+            toBeAdded = `<div class="col-12">
+            <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Twitter Data</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Values</th>
+                            </tr>
+                        </thead>
+                        <tbody id ="table_data">`
+            for (let x of Object.keys(twitter_details)){
+                toBeAdded += `
+                <tr>
+                                <td>${x}</td>
+                                <td>${twitter_details[x]}</td>
+                            </tr>`
+            }
+
+                        toBeAdded += `</tbody>
+            </table>
+            </div></div></div>
+                        </div>
+                        </div>`
+            outer.insertAdjacentHTML("beforeend", toBeAdded)
+
+                   
+            
+        }
+
+
+
+    }
+</script>
+{% endblock script_references %}

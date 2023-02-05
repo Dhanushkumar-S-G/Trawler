@@ -3,7 +3,7 @@ from .forms import *
 from email.parser import HeaderParser
 import time
 import dateutil.parser
-
+from django.contrib import messages
 from datetime import datetime
 import re
 
@@ -222,3 +222,73 @@ def malware_analysis(request):
 
 def mobile_search(request):
     return render (request,"user/mobile_search.html")
+
+
+def upload_dump(request):
+    if request.method == "POST":
+        return redirect('dump-analysis')
+        # form = DumpFileUploadForm(request.POST,request.FILES)
+        # if form.is_valid():
+        #     form.save()
+        #     messages.success(request,"File uploaded successfully !!")
+            
+    form = DumpFileUploadForm()
+    return render(request, "user/upload_dump.html",{
+        'form':form
+    })
+
+def create_case(request):
+    if request.method == "POST":
+        form = CaseDetailsForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Case created Successfully!!")
+    form = CaseDetailsForm()
+    return render(request, "user/casedetail.html",{
+        'form':form
+    })
+
+
+def mobile_details(request,case_num):
+    cases = CaseDetails.objects.filter(case_num=case_num)
+    if cases.exists():
+        case = cases.first()
+        return render(request,"user/mobile_details.html",{
+            'case':case
+        })
+    else:
+        messages.error(request,"Case not found. Please enter a valid case number..!!")
+        return redirect('mobile-search')
+    
+
+def upi_recon(request):
+    return render(request,"user/upi_recon.html")
+
+
+def name_lookup(request):
+    return render(request, "user/namelookup.html")
+
+def name_lookup_details(request,case_num):
+    case_objs = CaseDetails.objects.filter(case_num=case_num)
+    if case_objs.exists():
+        case_obj = case_objs.first()
+        if case_obj.is_upi_verified:
+            name = case_obj.upiid_name
+        elif case_obj.phone_number_owner:
+            name = case_obj.phone_number_owner
+        else:
+            messages.error(request, "No username was found in this case")
+            return redirect('name-lookup')
+    else:
+        messages.error(request,"Enter a valid Case Number !!")
+        return redirect('name-lookup')
+    return render(request, "user/name_lookup_details.html",{
+        'name':name,'case_obj':case_obj
+    })
+
+
+def twitter_details(request):
+    return render(request,"user/twitter_details.html")
+
+def dump_analysis(request):
+    return render(request,"user/dump.html")

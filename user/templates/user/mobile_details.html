@@ -1,0 +1,341 @@
+{% extends 'user/index.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block style_references %}
+<link href="{% static 'vendor/datatables/dataTables.bootstrap4.min.css' %}" rel="stylesheet">
+{% endblock%}
+{% block content %}
+<style>
+    #map{
+        width: 100%;
+        
+    }
+</style>
+<div id="content">
+    <div class="container-fluid">
+        <!-- <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Position</th>
+                                <th>Office</th>
+                                <th>Age</th>
+                                <th>Start date</th>
+                                <th>Salary</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Tiger Nixon</td>
+                                <td>System Architect</td>
+                                <td>Edinburgh</td>
+                                <td>61</td>
+                                <td>2011/04/25</td>
+                                <td>$320,800</td>
+                            </tr>
+                            <tr>
+                                <td>Garrett Winters</td>
+                                <td>Accountant</td>
+                                <td>Tokyo</td>
+                                <td>63</td>
+                                <td>2011/07/25</td>
+                                <td>$170,750</td>
+                            </tr>
+                            <tr>
+                                <td>Ashton Cox</td>
+                                <td>Junior Technical Author</td>
+                                <td>San Francisco</td>
+                                <td>66</td>
+                                <td>2009/01/12</td>
+                                <td>$86,000</td>
+                            </tr>
+                            <tr>
+                                <td>Cedric Kelly</td>
+                                <td>Senior Javascript Developer</td>
+                                <td>Edinburgh</td>
+                                <td>22</td>
+                                <td>2012/03/29</td>
+                                <td>$433,060</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div> -->
+        <div class="row" id="outer_container">
+            <!-- <div class="col-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Basic Card Example</h6>
+                    </div>
+                    <div class="card-body">
+                        The styling for this basic card example is created by using default Bootstrap
+                        utility classes. By using utility classes, the style of the card component can be
+                        easily modified with no need for any custom CSS!
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Basic Card Example</h6>
+                    </div>
+                    <div class="card-body">
+                        The styling for this basic card example is created by using default Bootstrap
+                        utility classes. By using utility classes, the style of the card component can be
+                        easily modified with no need for any custom CSS!
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Basic Card Example</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Position</th>
+                                        <th>Office</th>
+                                        <th>Age</th>
+                                        <th>Start date</th>
+                                        <th>Salary</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Tiger Nixon</td>
+                                        <td>System Architect</td>
+                                        <td>Edinburgh</td>
+                                        <td>61</td>
+                                        <td>2011/04/25</td>
+                                        <td>$320,800</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Garrett Winters</td>
+                                        <td>Accountant</td>
+                                        <td>Tokyo</td>
+                                        <td>63</td>
+                                        <td>2011/07/25</td>
+                                        <td>$170,750</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ashton Cox</td>
+                                        <td>Junior Technical Author</td>
+                                        <td>San Francisco</td>
+                                        <td>66</td>
+                                        <td>2009/01/12</td>
+                                        <td>$86,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Cedric Kelly</td>
+                                        <td>Senior Javascript Developer</td>
+                                        <td>Edinburgh</td>
+                                        <td>22</td>
+                                        <td>2012/03/29</td>
+                                        <td>$433,060</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block script_references%}
+<script>
+    let outer = document.getElementById("outer_container")
+    async function get_number_owner(){
+        url = `/api/check_number_owner?phone_number={{case.phonenumber}}&case_num={{case.case_num}}`
+        let number_owner = await fetch(url)
+        number_owner = await number_owner.json()    
+        console.log(number_owner)
+        toBeAdded = `<div class="col-6">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Owner Name</h6>
+                        </div>
+                        <div class="card-body">
+                            ${number_owner.name}
+                        </div>
+                    </div>
+                    </div>
+                    <div class="col-6">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Owner Location and Time</h6>
+                        </div>
+                        <div class="card-body">
+                            ${number_owner.address}
+                        </div>
+                    </div>
+                    </div>`
+        outer.insertAdjacentHTML("beforeend", toBeAdded)
+        does_owner_has_whatsapp()
+    }
+
+    async function does_owner_has_whatsapp(){
+        url = `/api/check_whatsapp?phone_number={{case.phonenumber}}&case_num={{case.case_num}}`
+        let is_whatsapp_enabled = await fetch(url)
+        is_whatsapp_enabled = await is_whatsapp_enabled.json()    
+        console.log(is_whatsapp_enabled)
+        toBeAdded = `<div class="col-6">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Is Whatsapp Enabled</h6>
+                        </div>
+                        <div class="card-body">
+                            ${is_whatsapp_enabled.status =="valid" ? "Whatsapp Active": "Not Active in Whatsapp"}
+                        </div>
+                    </div>
+                    </div>`
+        outer.insertAdjacentHTML("beforeend", toBeAdded)
+        is_data_breached()
+    }
+
+    async function is_data_breached(){
+        url = `/api/search_breached_data/?search_field={{case.phonenumber}}&case_num={{case.case_num}}`
+        let is_breached = await fetch(url)
+        is_breached = await is_breached.json()
+        console.log(is_breached)
+        if (!!is_breached.oooh){
+            toBeAdded = `<div class="col-6">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Is Breached Data Found</h6>
+                        </div>
+                        <div class="card-body">
+                            No breached Data found
+                        </div>
+                    </div>
+                    </div>`
+            outer.insertAdjacentHTML("beforeend", toBeAdded)
+        }
+        else{
+            toBeAdded = `
+            <div class="col-12">
+            <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Breached Data</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Breached Site</th>
+                                <th>Breadhed Date</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        `
+            for (let breached_data of is_breached.Breaches){
+                toBeAdded += `<tr>
+                    <td>${breached_data.Name}</td>
+                    <td>${breached_data.BreachDate}</td>
+                    <td>${breached_data.Description}</td>
+                    </tr>`
+            }
+            toBeAdded  += `
+            </tbody>
+            </table>
+            </div></div></div>
+                        </div>
+                        </div>`
+            outer.insertAdjacentHTML("beforeend", toBeAdded)
+        }
+        get_number_lookup()
+    }
+    async function get_number_lookup(){
+        url = `/api/number_lookup/?phone_number={{case.phonenumber}}&case_num={{case.case_num}}`
+        let number_lookup = await fetch(url)
+        number_lookup = await number_lookup.json()
+        toBeAdded = `
+            <div class="col-12">
+            <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Breached Data</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Detail</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        `
+        for (let detail of Object.keys(number_lookup)){
+            if (detail == "Owner Name"){
+                continue;
+            }
+            if (!isFinite(detail)){
+                toBeAdded += `<tr>
+                    <td>${detail}</td>
+                    <td>${number_lookup[detail]}</td>
+                    </tr>`
+            }
+        }
+        toBeAdded  += `
+            </tbody>
+            </table>
+            </div></div></div>
+                        </div>
+                        </div>`
+            outer.insertAdjacentHTML("beforeend", toBeAdded)
+            get_upi_id()
+    }
+    async function get_upi_id(){
+        url = `/api/upi_enum?data={"data": ["{{case.phonenumber}}"] }&case_num={{case.case_num}}`
+        let upi_id_recon = await fetch(url)
+        upi_id_recon = await upi_id_recon.json()
+        console.log(upi_id_recon)
+        toBeAdded = `
+            <div class="col-12">
+            <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Upi Recon </h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Phone number</th>
+                                <th>Name</th>
+                                <th>UPIID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        `
+        toBeAdded += `<tr>
+        <td>${upi_id_recon["data"][0]["upi_id/phone_number"]}</td>
+        <td>${upi_id_recon["data"][0]["name"]}</td>
+        <td>${upi_id_recon["data"][0].status.split("\n")[0]}</td>
+        </tr>`
+        outer.insertAdjacentHTML("beforeend", toBeAdded)
+    }
+    
+
+
+    get_number_owner()
+</script>
+
+{% endblock %}

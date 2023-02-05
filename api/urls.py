@@ -16,4 +16,12 @@ urlpatterns = [
     path("number_lookup/",number_lookup,name="api-number-lookup"),
     path("search_breached_data/",search_breached_data,name="api-search-breached-data"),
     path("name_lookup/",name_lookup,name="api-name-lookup"),
-]
+    path("upi_enum/",upi_enum,name="api-upi-enum"),
+    path("check_amazon/",check_amazon,name="check-amazon"),
+    path("get_dump/",get_dump,name="get-dump"),
+    path("get_insta_bio",get_insta_bio,name='get-insta-bio'),
+    path("get_twitter_bio",get_twitter_bio,name="get-twitter-bio"),
+    path("get_email_lookup/",email_lookup, name='email-lookup'),
+    
+    # path()
+] 

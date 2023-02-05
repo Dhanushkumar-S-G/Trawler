@@ -11,7 +11,6 @@ import socket
 import json
 import datetime
 import logging
-
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, z):
         if isinstance(z, datetime.datetime):
@@ -23,7 +22,6 @@ class DateTimeEncoder(json.JSONEncoder):
 def get_ip(request):
     case_number = request.GET.get("case_number",None)
     domain = request.GET.get("domain",None)
-    print(domain)
     ip_address = socket.gethostbyname(domain)
     if case_number in [None ,'']:
         return JsonResponse({"ip_adrdess":ip_address})
@@ -58,7 +56,6 @@ def whois(request):
             whois_obj.res = data
             whois_obj.save() 
         serialized_data = WhoIsSerializer(whois_obj).data
-        print(serialized_data)
         return JsonResponse(serialized_data)
 
 
@@ -238,7 +235,6 @@ def subdomain_enum(request):
                     pass 
             sub_obj.res = {"subdomain":subdomain_store}
             sub_obj.save()
-        print("insideeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
         serialized_data = SubDomainSerializer(sub_obj).data
         return JsonResponse(data=serialized_data)
     
@@ -316,16 +312,27 @@ def check_whatsapp(request):
     driver.get(url)
     time.sleep(10)
     try:
+        case_num = request.GET.get("case_num", None)
         url = driver.find_element(By.XPATH ,"//*[@id=\"app\"]/div/span[2]/div/span/div/div/div/div/div/div[1]")
         if url.text:
             return JsonResponse(status=200,data={"status":"invalid"})
     except selenium.common.exceptions.NoSuchElementException:
+        if case_num:
+            case_obj = CaseDetails.objects.get(case_num=case_num)
+            case_obj.is_whatsapp_active = True
+            case_obj.save()
         return JsonResponse(status=200,data={"status":"valid"})
 
 
 
 def check_number_owner(request):
     phone_number = request.GET.get("phone_number")
+    case_num = request.GET.get("case_num", None)
+    if case_num:
+        case_obj = CaseDetails.objects.get(case_num=case_num)
+        if case_obj.phone_number_owner and case_obj.phone_number_owner_location:
+            return JsonResponse({'name':case_obj.phone_number_owner,'address':case_obj.phone_number_owner_location})
+        
     driver.get("https://www.truecaller.com/reverse-phone-number-lookup")
 
     input_field = driver.find_element(By.XPATH,'//*[@id="__nuxt"]/div/main/div[2]/section[1]/div/form/input')
@@ -339,18 +346,25 @@ def check_number_owner(request):
         name = driver.find_element(By.XPATH,'//*[@id="__nuxt"]/div/main/div[2]/div/div[2]/div/div/div[2]/header/div[1]/div[3]')
     except Exception as e:
         return JsonResponse({"error":"limit exceeded"})
+    if case_num:
+        case_obj = CaseDetails.objects.get(case_num=case_num)
+        case_obj.phone_number_owner = name.text
+        case_obj.phone_number_owner_location = address.text
+        case_obj.save()
     return JsonResponse(status=200,data={"name":name.text,"address":address.text})
 
 
 import requests
 from bs4 import BeautifulSoup
 def number_lookup(request):
+    case_num = request.GET.get("case_num")
+    lookup = ReverseNumberLookup.objects.filter(casedetail__case_num = case_num)
+    if lookup.exists():
+        return JsonResponse(data=json.loads(lookup[0].numberlookup))
     phone_number = request.GET.get("phone_number")
     URL = f"https://calltracer.org/?q={phone_number}"
     res = requests.get(URL)
-
     soup = BeautifulSoup(res.content, 'html.parser') # If this line causes an error, run 'pip install html5lib' or install html5lib
-
     output = {}
     rows = soup.find_all('tr')
     for i in rows:
@@ -359,16 +373,29 @@ def number_lookup(request):
             output[row[0].text] = row[1].text
         except:
             pass
+    if case_num:
+        case_obj = CaseDetails.objects.get(case_num = case_num)
+        ReverseNumberLookup.objects.create(phonenumber=phone_number,casedetail=case_obj,numberlookup=json.dumps(output))
     return JsonResponse(data=output)
 
 
 def search_breached_data(request):
     search_field = request.GET.get("search_field")
+    case_num = request.GET.get("case_num",None)
+    if case_num:
+        case_obj = CaseDetails.objects.get(case_num=case_num)
+        if case_obj.is_breached:
+            return JsonResponse(json.loads(case_obj.breached_data))
     url = f"https://haveibeenpwned.com/unifiedsearch/{search_field}"
     driver.get(url)
     try:
         content = driver.find_element(By.XPATH,"/html/body/pre")
         data = json.loads(content.text)
+        if case_num:
+            case_obj = CaseDetails.objects.get(case_num=case_num)
+            case_obj.is_breached = True
+            case_obj.breached_data = content.text
+            case_obj.save()
     except:
         data = {"oooh":"no data found"}
     return JsonResponse(data=data)
@@ -376,13 +403,15 @@ def search_breached_data(request):
 
 def name_lookup(request):
     name = request.GET.get("name")
-
+    case_num = request.GET.get("case_num")
+    name_lookup = NameLookUpDetails.objects.filter(casedetail__case_num = case_num)
+    if name_lookup.exists():
+        return JsonResponse(json.loads(name_lookup.first().namelookup))
     url = f"https://www.idcrawl.com/{name}"
     headers = {
         'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36'
     }
     res = requests.get(url,headers=headers)
-    print("response code ",res.status_code) 
     soup = BeautifulSoup(res.content, 'html.parser')
 
     data = {}
@@ -498,12 +527,223 @@ def name_lookup(request):
     web_items = web.find_all("div",{"class":"gl-job-list-item"})
     web_links = []
     for web_item in web_items:
-        temp = {}
-        temp["header"] = web_item.find_all("a")[0].text
-        temp["link"] = web_item.find_all("a")[0]["href"]
-        temp["desc"] = web_item.find_all("p")[0].text
-        web_links.append(temp)
+        try:
+            temp = {}
+            temp["header"] = web_item.find_all("a")[0].text
+            temp["link"] = web_item.find_all("a")[0]["href"]
+            temp["desc"] = web_item.find_all("p")[0].text
+            web_links.append(temp)
+        except:
+            pass
+
     data['web'] = web_links
-        
+    case_obj = CaseDetails.objects.get(case_num = case_num)
+    NameLookUpDetails.objects.create(username=name,casedetail=case_obj,namelookup=json.dumps(data))
     return JsonResponse(data=data)
 
+
+def upi_enum(request):
+    data = request.GET.get("data")
+    print(data)
+    data = json.loads(data)
+    print(data)
+    data = data['data']
+    case_num = request.GET.get('case_num',None)
+    if case_num:
+        case_obj = CaseDetails.objects.get(case_num = case_num)
+        if case_obj.is_upi_verified:
+            return JsonResponse({"data" :[{"name":case_obj.upiid_name,"status":case_obj.upiid,"upi_id/phone_number":case_obj.phonenumber}]})
+    driver.get("https://dev.yugam.in/event/77/detail/")
+    time.sleep(10)
+    driver.find_element(By.XPATH, '//*[@id="pay_btn"]/span/button').click()
+    time.sleep(5)
+    driver.find_element(By.XPATH, '/html/body/div[6]/div/div[6]/button[1]').click()
+    time.sleep(5)
+    driver.find_element(By.XPATH, '//*[@id="1"]/ul/li[2]').click()
+    time.sleep(5)
+    driver.find_element(By.XPATH, '//*[@id="[object Object]"]').click()
+    time.sleep(5)
+    valid_upis = []
+    for datum in data:
+        try:
+            input_field = driver.find_element(By.XPATH, '//*[@id="upi2Id"]')
+            input_field.click()
+            input_field.send_keys(Keys.CONTROL + "a")
+            input_field.send_keys(Keys.DELETE)
+            input_field.send_keys(str(datum))
+            time.sleep(1)
+            driver.find_element(By.XPATH, '//*[@id="upi-verify-enabled"]').click()
+            time.sleep(15)
+            try:
+                valid_upis.append({"upi_id/phone_number":str(datum),"status":driver.find_element(By.XPATH, '//*[@id="upi2IdError"]').text})
+            except:
+                try:
+                    name = driver.find_element(By.XPATH, '//*[@id="upi2IdRow"]/div/span[2]').text
+                except:
+                    name = None
+                temp = {"upi_id/phone_number":str(datum),"status":driver.find_element(By.XPATH, '//*[@id="upiAppText"]').text}
+                if name not in [None," "]:
+                    temp["name"] = name
+                valid_upis.append(temp)
+                if case_num:
+                    case_obj = CaseDetails.objects.get(case_num = case_num)
+                    case_obj.upiid = temp["status"]
+                    case_obj.upiid_name = temp["name"]
+                    case_obj.is_upi_verified = True
+                    case_obj.save()  
+            print("=========",valid_upis)
+        except:
+            pass
+    
+    return JsonResponse({'data':valid_upis})
+
+
+def check_amazon(request):
+    
+    import requests
+    from bs4 import BeautifulSoup
+
+    '''define URL where login form is located'''
+    site = 'https://www.amazon.com/gp/sign-in.html'
+
+    '''initiate session'''
+    session = requests.Session()
+
+    '''define session headers'''
+    session.headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.61 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Referer': site
+    }
+    '''get login page'''
+    resp = session.get(site)
+    html = resp.text
+
+    '''get BeautifulSoup object of the html of the login page'''
+    soup = BeautifulSoup(html, 'lxml')
+
+
+    '''scrape login page to get all the needed inputs required for login'''
+    data = {}
+    form = soup.find('form', {'name': 'signIn'})
+    for field in form.find_all('input'):
+        try:
+            data[field['name']] = field['value']
+
+        except:
+            pass
+
+    email_phno = request.GET.get("email")
+    data[u'email'] = email_phno
+    # data[u'password'] = PASSWORD
+    post_resp = session.post('https://www.amazon.com/ap/signin', data=data)
+    post_soup = BeautifulSoup(post_resp.content, 'lxml')
+    result = post_soup.find_all("div", {"class": "a-alert-content"})
+
+    for i in result:
+        if ("\n  Enter your password\n" in i.find_all(text=True, recursive=False)):
+            return JsonResponse({"status":"valid"})
+
+    return JsonResponse({"status":"invalid"})
+            
+
+# def upi_recon(request):
+#     data_list = ['abfspay','airtel','airtelpaymentsbank','albk','allahabadbank','allbank','andb','apb','apl','aubank','axis','axisb','axisbank','axisgo','axl','bandhan','barodampay','barodapay','birla','boi','cbin','cboi','centralbank','cmsidfc','cnrb','csbcash','csbpay','cub','dbs','dcb','denabank','dlb','dnsbank','eazypay','esaf','equitas','ezeepay','fbl','federal','finobank','freecharge','hdfcbank','hdfcbankjd','hsbc','ibl','icici','icicibank','idbi','idbibank','idfc','idfcbank','idfcnetc','ikwik','imobile','indbank','indianbank','indianbk','indus','iob','janabank','jio','jkb','jsbp','jupiteraxis','karb','karurvysyabank','kaypay','kbl','kmb','kmbl','kotak','kvb','kvbank','lime','lvb','lvbank','mahb','myicici','nsdl','obc','okaxis','okbizaxis','okhdfcbank','okicici','oksbi','paytm','payzapp','pingpay','pnb','pockets','postbank','psb','purz','rajgovhdfcbank','rbl','rmhdfcbank','sbi','sc','scb','scbl','scmobile','sib','srcb','synd','syndbank','syndicate','tapicici','timecosmos','tjsb','ubi','uboi','uco','unionbank','unionbankofindia','united','upi','utbi','utkarshbank','vijayabank','vijb','vjb','waaxis','wahdfcbank','waicici','wasbi','yapl','ybl','yesbank','yesbankltd']
+
+#     search_name = request.GET.get('search_name')
+#     request.GET["data"] = {'data':data_list}
+#     recon_list = []
+#     for i in data_list:
+#         recon_list.append(search_name+"@"+i)
+
+    
+
+    
+def get_dump(request):
+    case_num = request.GET.get("case_num")
+    dump = DumpData.objects.get(case_number=case_num)
+    import pandas as pd
+    df = pd.read_csv(dump.file.path,header=None)
+    data = {'dump_data':df.to_numpy().tolist()}
+    return JsonResponse(data=data)
+
+
+def get_insta_bio(request):
+    username = request.GET.get('username')
+    url = f"https://www.instagram.com/{username}"
+    response = requests.get(url)
+    if response.status_code == 429:
+        return_data = {"error": "rate limit exceeded"}
+    elif response.status_code == 200:
+        return_data = {}
+        soup = BeautifulSoup(response.text, "html.parser")
+        data = soup.find_all("meta", attrs={"property": "og:description"})
+        if data:
+            text = data[0].get("content").split()
+            return_data['followers'] = text[0]
+            return_data['following']  = text[2]
+            return_data['posts'] = text[4]
+        else:
+            return_data["followers"] = 'Not found'
+            return_data["following"] = 'Not found'
+        data = soup.find_all("meta", attrs={"property": "og:image"})
+        if data:
+            image = data[0].get("content") 
+            return_data["image_url"] = image
+        else:
+            return_data["image_url"] = 'no profile pic found'
+    else:
+        return_data =  {"error" : "Account Not found"}
+    
+    return JsonResponse(data=return_data)
+
+import tweepy
+import configparser
+
+
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+
+api_key = config['twitter']['api_key']
+api_key_secret = config['twitter']['api_key_secret']
+
+access_token = config['twitter']['access_token']
+access_token_secret = config['twitter']['access_token_secret']
+
+auth = tweepy.OAuth1UserHandler(
+   api_key , api_key_secret, access_token, access_token_secret
+)
+api = tweepy.API (auth)
+
+def get_twitter_bio(request):
+    try:
+        username = request.GET.get('username')
+        public_tweets = api.user_timeline(screen_name=f'{username}',count=1,tweet_mode="extended")
+        details = public_tweets[0]
+        user = details.user
+
+        return_data = {}
+        return_data['name'] =  user.name
+        return_data['screnn name'] = user.screen_name
+        return_data['location'] = user.location
+        return_data['description'] = user.description
+        return_data['followers_count'] = user.followers_count
+        return_data['friends count'] = user.friends_count
+        return_data['created at'] = user.created_at
+        return_data['favourites count'] =  user.favourites_count
+        return_data['time zone'] = user.time_zone
+        return_data['geo enabled'] = user.geo_enabled
+        return_data['verified'] = user.verified
+        return_data['statuses count'] = user.statuses_count
+        return_data['lang'] =  user.lang
+        return_data['background_img_url'] = user.profile_background_image_url
+        return_data['profile_image_url'] = user.profile_image_url_https
+        return JsonResponse(data=return_data)
+    except:
+        return JsonResponse({"error":"Account not found"})
+
+
+def email_lookup(request):
+    email = request.GET.get('email')

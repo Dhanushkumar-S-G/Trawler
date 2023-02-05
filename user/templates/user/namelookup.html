@@ -19,13 +19,13 @@
         <!-- Card Header - Dropdown -->
         <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Name Lookup</h6>   
+            <h6 class="m-0 font-weight-bold text-primary">NameLookup</h6>   
         </div>
         <!-- Card Body -->
         <div class="card-body" style="display:block ;">
             <div class="form-group">
-                <label for="exampleInputEmail1">Enter the Case Number</label>
-                <input type="text" class="form-control" id="name" aria-describedby="emailHelp" >
+                <label for="exampleInputEmail1">Enter the case number</label>
+                <input type="text" class="form-control" id="case_number" aria-describedby="emailHelp" >
             </div>
             <button  class="btn btn-primary" onclick="input_check()" id="submitbutton" >Submit</button>
         </div>
@@ -37,8 +37,8 @@
 <script>
     // document.getElementById("submitbutton").addEventListener("onclick",input_check())
     function input_check(){
-        let name = document.getElementById("name").value
-        if (name == "" || name==" " || name ==null){
+        let case_num = document.getElementById("case_number").value
+        if (case_num == "" || case_num==" " || case_num ==null){
             alert("Please enter a valid input");
         }
         else{

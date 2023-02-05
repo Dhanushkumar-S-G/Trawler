@@ -1,0 +1,87 @@
+[
+  {
+    "id": "/subscriptions/db10be44-4028-4be8-b867-0f1cad231245/resourceGroups/dhanushkumar.20cs-sandbox-RG/providers/Microsoft.Resources/deployments/CreateVm-MicrosoftWindowsDesktop.Windows-10-win10-20230205091538/operations/488CDE4CF82F9536",
+    "operationId": "488CDE4CF82F9536",
+    "properties": {
+      "provisioningOperation": "Create",
+      "provisioningState": "Running",
+      "timestamp": "2023-02-05T03:49:19.309219Z",
+      "duration": "PT12.1307186S",
+      "trackingId": "66cfa248-3abb-4f58-884f-9f03b9fa7de9",
+      "statusCode": "Created",
+      "targetResource": {
+        "id": "/subscriptions/db10be44-4028-4be8-b867-0f1cad231245/resourceGroups/dhanushkumar.20cs-sandbox-RG/providers/Microsoft.Compute/virtualMachines/Trawler",
+        "resourceType": "Microsoft.Compute/virtualMachines",
+        "resourceName": "Trawler"
+      }
+    }
+  },
+  {
+    "id": "/subscriptions/db10be44-4028-4be8-b867-0f1cad231245/resourceGroups/dhanushkumar.20cs-sandbox-RG/providers/Microsoft.Resources/deployments/CreateVm-MicrosoftWindowsDesktop.Windows-10-win10-20230205091538/operations/A8D9BC0445818E82",
+    "operationId": "A8D9BC0445818E82",
+    "properties": {
+      "provisioningOperation": "Create",
+      "provisioningState": "Succeeded",
+      "timestamp": "2023-02-05T03:49:12.1081883Z",
+      "duration": "PT4.9296879S",
+      "trackingId": "c6e5fffe-f14e-42c6-aeeb-c6149554ebfc",
+      "statusCode": "Created",
+      "targetResource": {
+        "id": "/subscriptions/db10be44-4028-4be8-b867-0f1cad231245/resourceGroups/dhanushkumar.20cs-sandbox-RG/providers/Microsoft.Network/networkInterfaces/trawler970",
+        "resourceType": "Microsoft.Network/networkInterfaces",
+        "resourceName": "trawler970"
+      }
+    }
+  },
+  {
+    "id": "/subscriptions/db10be44-4028-4be8-b867-0f1cad231245/resourceGroups/dhanushkumar.20cs-sandbox-RG/providers/Microsoft.Resources/deployments/CreateVm-MicrosoftWindowsDesktop.Windows-10-win10-20230205091538/operations/BE02148FB1E957B5",
+    "operationId": "BE02148FB1E957B5",
+    "properties": {
+      "provisioningOperation": "Create",
+      "provisioningState": "Succeeded",
+      "timestamp": "2023-02-05T03:49:05.5552913Z",
+      "duration": "PT10.1179508S",
+      "trackingId": "ab327083-4184-446e-bfef-7d8edcbb5015",
+      "statusCode": "OK",
+      "targetResource": {
+        "id": "/subscriptions/db10be44-4028-4be8-b867-0f1cad231245/resourceGroups/dhanushkumar.20cs-sandbox-RG/providers/Microsoft.Network/virtualNetworks/dhanushkumar.20cs-sandbox-RG-vnet",
+        "resourceType": "Microsoft.Network/virtualNetworks",
+        "resourceName": "dhanushkumar.20cs-sandbox-RG-vnet"
+      }
+    }
+  },
+  {
+    "id": "/subscriptions/db10be44-4028-4be8-b867-0f1cad231245/resourceGroups/dhanushkumar.20cs-sandbox-RG/providers/Microsoft.Resources/deployments/CreateVm-MicrosoftWindowsDesktop.Windows-10-win10-20230205091538/operations/23509699DDD56D1F",
+    "operationId": "23509699DDD56D1F",
+    "properties": {
+      "provisioningOperation": "Create",
+      "provisioningState": "Succeeded",
+      "timestamp": "2023-02-05T03:49:04.8363741Z",
+      "duration": "PT9.3990336S",
+      "trackingId": "c3431ab6-2f46-4e32-9af0-ba10aa12121d",
+      "statusCode": "OK",
+      "targetResource": {
+        "id": "/subscriptions/db10be44-4028-4be8-b867-0f1cad231245/resourceGroups/dhanushkumar.20cs-sandbox-RG/providers/Microsoft.Network/networkSecurityGroups/Trawler-nsg",
+        "resourceType": "Microsoft.Network/networkSecurityGroups",
+        "resourceName": "Trawler-nsg"
+      }
+    }
+  },
+  {
+    "id": "/subscriptions/db10be44-4028-4be8-b867-0f1cad231245/resourceGroups/dhanushkumar.20cs-sandbox-RG/providers/Microsoft.Resources/deployments/CreateVm-MicrosoftWindowsDesktop.Windows-10-win10-20230205091538/operations/C35C1191AF19B3C4",
+    "operationId": "C35C1191AF19B3C4",
+    "properties": {
+      "provisioningOperation": "Create",
+      "provisioningState": "Succeeded",
+      "timestamp": "2023-02-05T03:49:06.9953275Z",
+      "duration": "PT11.557987S",
+      "trackingId": "9789022c-a100-4b96-b5f8-d3156243d4b6",
+      "statusCode": "OK",
+      "targetResource": {
+        "id": "/subscriptions/db10be44-4028-4be8-b867-0f1cad231245/resourceGroups/dhanushkumar.20cs-sandbox-RG/providers/Microsoft.Network/publicIpAddresses/Trawler-ip",
+        "resourceType": "Microsoft.Network/publicIpAddresses",
+        "resourceName": "Trawler-ip"
+      }
+    }
+  }
+]

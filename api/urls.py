@@ -21,7 +21,7 @@ urlpatterns = [
     path("get_dump/",get_dump,name="get-dump"),
     path("get_insta_bio",get_insta_bio,name='get-insta-bio'),
     path("get_twitter_bio",get_twitter_bio,name="get-twitter-bio"),
-    path("get_email_lookup/",email_lookup, name='email-lookup'),
-    
+    path("get_email_lookup/",email_lookup, name='get-email-lookup'),
+
     # path()
 ] 

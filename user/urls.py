@@ -16,7 +16,7 @@ urlpatterns = [
     path("name_lookup/<str:case_num>",name_lookup_details,name="name-lookup-details"),
     path("twitter_lookup/",twitter_details,name="twitter-details"),
     path("dump_analysis/",dump_analysis,name='dump-analysis'),
-    # path("email_lookup/",em)
+    path("email_lookup/",email_lookup,name='email-lookup')
 ]
 
 

@@ -1,0 +1,133 @@
+{% extends 'user/index.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<style>
+    /* input[type="text"]{
+        display: block;
+        width: 68vw;
+        margin: 15px;
+    }
+    label{
+        display: block;
+        margin: 15px;
+        text-align: left;
+    } */
+
+</style>
+<div class="container" style="text-align: center;" >
+    <div class="card shadow mb-4">
+        <!-- Card Header - Dropdown -->
+        <div
+            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Email Enumeration</h6>   
+        </div>
+        <!-- Card Body -->
+        <div class="card-body" style="display:block ;">
+            <div class="form-group">
+                <label for="exampleInputEmail1">Enter Email Id</label>
+                <input type="email" class="form-control" id="email" aria-describedby="emailHelp" >
+            </div>
+            <button  class="btn btn-primary" onclick="input_check()" id="submitbutton" >Submit</button>
+        </div>
+    </div>
+</div>
+<div id="output" class="container" >
+    <div class="row" id="outer_container">
+    </div>
+</div>
+{% endblock %}
+
+{% block script_references %}
+<script>
+    // document.getElementById("submitbutton").addEventListener("onclick",input_check())
+    async function input_check(){
+        let email = document.getElementById("email").value
+        if (email == "" || email==" " || email ==null){
+            alert("Please enter a valid input");
+        }
+        else{
+            outer =  document.getElementById("outer_container")
+            url = `/api/get_email_lookup/?email=${email}`
+            let email_details = await fetch(url)
+            email_details = await email_details.json()
+            console.log(email_details)
+            toBeAdded = `<div class="col-12">
+            <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Social Media Active</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Values</th>
+                            </tr>
+                        </thead>
+                        <tbody id ="table_data">`
+            for (let x of Object.keys(email_details)){
+                toBeAdded += `
+                <tr>
+                                <td>${x}</td>
+                                <td>${email_details[x]}</td>
+                            </tr>`
+            }
+            url = `/api/check_amazon/?email=${email}`
+            email_details = await fetch(url)
+            email_details = await email_details.json()
+            console.log(email_details)
+            toBeAdded += `
+                <tr>
+                                <td>AMAZON</td>
+                                <td>${email_details.status}</td>
+                            </tr>`
+                        toBeAdded += `</tbody>
+            </table>
+            </div></div></div>
+                        </div>
+                        </div>`
+            outer.insertAdjacentHTML("beforeend", toBeAdded)
+            email = email.split("@")[0]
+            let gmail_upi_recon = [ '@okaxis','@okicici','@okhdfcbank','@oksbi']
+            let search_array = []
+            for(let y of gmail_upi_recon){
+                search_array.push( email + y)
+            }
+            let z = JSON.stringify({"data": search_array })
+            url = `/api/upi_enum?data=${z}`
+            let upi_id_recon = await fetch(url)
+            upi_id_recon = await upi_id_recon.json()
+            console.log(upi_id_recon)
+            toBeAdded = `<div class="col-12">
+            <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Social Media Active</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>UPI id</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id ="table_data">`
+            for (let x of Object.keys(upi_id_recon.data)){
+                console.log(Object.keys(x))
+            toBeAdded += `
+            <tr>
+                <td>${x["upi_id/phone_number"]}</td>
+                <td>${x.status}</td>
+            </tr>`
+            }
+            outer.insertAdjacentHTML("beforeend", toBeAdded)
+            
+        }
+
+
+
+    }
+</script>
+{% endblock script_references %}

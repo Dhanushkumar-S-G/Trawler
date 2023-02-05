@@ -292,3 +292,6 @@ def twitter_details(request):
 
 def dump_analysis(request):
     return render(request,"user/dump.html")
+
+def email_lookup(request):
+    return render(request, "user/email_lookup.html")

@@ -643,9 +643,9 @@ def check_amazon(request):
 
     for i in result:
         if ("\n  Enter your password\n" in i.find_all(text=True, recursive=False)):
-            return JsonResponse({"status":"valid"})
+            return JsonResponse({"status":"True"})
 
-    return JsonResponse({"status":"invalid"})
+    return JsonResponse({"status":"False"})
             
 
 # def upi_recon(request):
@@ -747,3 +747,11 @@ def get_twitter_bio(request):
 
 def email_lookup(request):
     email = request.GET.get('email')
+    from socialscan.util import Platforms, sync_execute_queries
+    queries = [email]
+    platforms = [Platforms.GITHUB, Platforms.INSTAGRAM,Platforms.YAHOO,Platforms.TWITTER ,Platforms.REDDIT,Platforms.SNAPCHAT]
+    results = sync_execute_queries(queries, platforms)
+    return_data = {}
+    for result in results:
+        return_data[result.platform.name] = result.success
+    return JsonResponse(return_data)

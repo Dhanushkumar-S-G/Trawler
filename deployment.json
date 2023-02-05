@@ -1,0 +1,255 @@
+{
+  "id": "/subscriptions/db10be44-4028-4be8-b867-0f1cad231245/resourceGroups/dhanushkumar.20cs-sandbox-RG/providers/Microsoft.Resources/deployments/CreateVm-MicrosoftWindowsDesktop.Windows-10-win10-20230205091538",
+  "name": "CreateVm-MicrosoftWindowsDesktop.Windows-10-win10-20230205091538",
+  "type": "Microsoft.Resources/deployments",
+  "tags": {
+    "primaryResourceId": "/subscriptions/db10be44-4028-4be8-b867-0f1cad231245/resourcegroups/dhanushkumar.20cs-sandbox-RG/providers/Microsoft.Compute/virtualMachines/Trawler",
+    "marketplaceItemId": "Microsoft.VirtualMachine-ARM",
+    "provisioningHash": "SolutionProvider"
+  },
+  "properties": {
+    "templateHash": "4753430792138045382",
+    "parameters": {
+      "location": {
+        "type": "String",
+        "value": "eastus"
+      },
+      "networkInterfaceName": {
+        "type": "String",
+        "value": "trawler970"
+      },
+      "networkSecurityGroupName": {
+        "type": "String",
+        "value": "Trawler-nsg"
+      },
+      "networkSecurityGroupRules": {
+        "type": "Array",
+        "value": [
+          {
+            "name": "RDP",
+            "properties": {
+              "priority": 300,
+              "protocol": "TCP",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "3389"
+            }
+          },
+          {
+            "name": "HTTPS",
+            "properties": {
+              "priority": 320,
+              "protocol": "TCP",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "443"
+            }
+          },
+          {
+            "name": "HTTP",
+            "properties": {
+              "priority": 340,
+              "protocol": "TCP",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "80"
+            }
+          },
+          {
+            "name": "SSH",
+            "properties": {
+              "priority": 360,
+              "protocol": "TCP",
+              "access": "Allow",
+              "direction": "Inbound",
+              "sourceAddressPrefix": "*",
+              "sourcePortRange": "*",
+              "destinationAddressPrefix": "*",
+              "destinationPortRange": "22"
+            }
+          }
+        ]
+      },
+      "subnetName": {
+        "type": "String",
+        "value": "default"
+      },
+      "virtualNetworkName": {
+        "type": "String",
+        "value": "dhanushkumar.20cs-sandbox-RG-vnet"
+      },
+      "addressPrefixes": {
+        "type": "Array",
+        "value": [
+          "10.0.0.0/16"
+        ]
+      },
+      "subnets": {
+        "type": "Array",
+        "value": [
+          {
+            "name": "default",
+            "properties": {
+              "addressPrefix": "10.0.0.0/24"
+            }
+          }
+        ]
+      },
+      "publicIpAddressName": {
+        "type": "String",
+        "value": "Trawler-ip"
+      },
+      "publicIpAddressType": {
+        "type": "String",
+        "value": "Static"
+      },
+      "publicIpAddressSku": {
+        "type": "String",
+        "value": "Standard"
+      },
+      "pipDeleteOption": {
+        "type": "String",
+        "value": "Detach"
+      },
+      "virtualMachineName": {
+        "type": "String",
+        "value": "Trawler"
+      },
+      "virtualMachineComputerName": {
+        "type": "String",
+        "value": "Trawler"
+      },
+      "virtualMachineRG": {
+        "type": "String",
+        "value": "dhanushkumar.20cs-sandbox-RG"
+      },
+      "osDiskType": {
+        "type": "String",
+        "value": "Premium_LRS"
+      },
+      "osDiskDeleteOption": {
+        "type": "String",
+        "value": "Delete"
+      },
+      "virtualMachineSize": {
+        "type": "String",
+        "value": "Standard_B2s"
+      },
+      "nicDeleteOption": {
+        "type": "String",
+        "value": "Detach"
+      },
+      "adminUsername": {
+        "type": "String",
+        "value": "AgentMuthuPandi"
+      },
+      "adminPassword": {
+        "type": "SecureString"
+      },
+      "patchMode": {
+        "type": "String",
+        "value": "AutomaticByOS"
+      },
+      "enableHotpatching": {
+        "type": "Bool",
+        "value": false
+      }
+    },
+    "mode": "Incremental",
+    "debugSetting": {
+      "detailLevel": "None"
+    },
+    "provisioningState": "Running",
+    "timestamp": "2023-02-05T03:49:19.239468Z",
+    "duration": "PT25.9159734S",
+    "correlationId": "dc368536-1c70-483c-9b80-a2d49ceb3a56",
+    "providers": [
+      {
+        "namespace": "Microsoft.Network",
+        "resourceTypes": [
+          {
+            "resourceType": "networkInterfaces",
+            "locations": [
+              "eastus"
+            ]
+          },
+          {
+            "resourceType": "networkSecurityGroups",
+            "locations": [
+              "eastus"
+            ]
+          },
+          {
+            "resourceType": "virtualNetworks",
+            "locations": [
+              "eastus"
+            ]
+          },
+          {
+            "resourceType": "publicIpAddresses",
+            "locations": [
+              "eastus"
+            ]
+          }
+        ]
+      },
+      {
+        "namespace": "Microsoft.Compute",
+        "resourceTypes": [
+          {
+            "resourceType": "virtualMachines",
+            "locations": [
+              "eastus"
+            ]
+          }
+        ]
+      }
+    ],
+    "dependencies": [
+      {
+        "dependsOn": [
+          {
+            "id": "/subscriptions/db10be44-4028-4be8-b867-0f1cad231245/resourceGroups/dhanushkumar.20cs-sandbox-RG/providers/Microsoft.Network/networkSecurityGroups/Trawler-nsg",
+            "resourceType": "Microsoft.Network/networkSecurityGroups",
+            "resourceName": "Trawler-nsg"
+          },
+          {
+            "id": "/subscriptions/db10be44-4028-4be8-b867-0f1cad231245/resourceGroups/dhanushkumar.20cs-sandbox-RG/providers/Microsoft.Network/virtualNetworks/dhanushkumar.20cs-sandbox-RG-vnet",
+            "resourceType": "Microsoft.Network/virtualNetworks",
+            "resourceName": "dhanushkumar.20cs-sandbox-RG-vnet"
+          },
+          {
+            "id": "/subscriptions/db10be44-4028-4be8-b867-0f1cad231245/resourceGroups/dhanushkumar.20cs-sandbox-RG/providers/Microsoft.Network/publicIpAddresses/Trawler-ip",
+            "resourceType": "Microsoft.Network/publicIpAddresses",
+            "resourceName": "Trawler-ip"
+          }
+        ],
+        "id": "/subscriptions/db10be44-4028-4be8-b867-0f1cad231245/resourceGroups/dhanushkumar.20cs-sandbox-RG/providers/Microsoft.Network/networkInterfaces/trawler970",
+        "resourceType": "Microsoft.Network/networkInterfaces",
+        "resourceName": "trawler970"
+      },
+      {
+        "dependsOn": [
+          {
+            "id": "/subscriptions/db10be44-4028-4be8-b867-0f1cad231245/resourceGroups/dhanushkumar.20cs-sandbox-RG/providers/Microsoft.Network/networkInterfaces/trawler970",
+            "resourceType": "Microsoft.Network/networkInterfaces",
+            "resourceName": "trawler970"
+          }
+        ],
+        "id": "/subscriptions/db10be44-4028-4be8-b867-0f1cad231245/resourceGroups/dhanushkumar.20cs-sandbox-RG/providers/Microsoft.Compute/virtualMachines/Trawler",
+        "resourceType": "Microsoft.Compute/virtualMachines",
+        "resourceName": "Trawler"
+      }
+    ],
+    "validationLevel": "Template"
+  }
+}
